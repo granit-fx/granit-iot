@@ -1,3 +1,13 @@
 <Solution>
-  <!-- Projects will be added as Feature issues (#2-#8) are implemented -->
+  <Folder Name="/src/">
+    <Project Path="src/Granit.IoT/Granit.IoT.csproj" />
+    <Project Path="src/Granit.IoT.EntityFrameworkCore/Granit.IoT.EntityFrameworkCore.csproj" />
+    <Project Path="src/Granit.IoT.Endpoints/Granit.IoT.Endpoints.csproj" />
+    <Project Path="src/Granit.IoT.EntityFrameworkCore.Postgres/Granit.IoT.EntityFrameworkCore.Postgres.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Granit.IoT.Tests/Granit.IoT.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.EntityFrameworkCore.Tests/Granit.IoT.EntityFrameworkCore.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.ArchitectureTests/Granit.IoT.ArchitectureTests.csproj" />
+  </Folder>
 </Solution>
