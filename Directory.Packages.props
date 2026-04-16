@@ -65,6 +65,7 @@
     <PackageVersion Include="Granit.Http.ApiVersioning" Version="0.1.0-dev.*" />
     <PackageVersion Include="Granit.Http.Cors" Version="0.1.0-dev.*" />
     <PackageVersion Include="Granit.Http.SecurityHeaders" Version="0.1.0-dev.*" />
+    <PackageVersion Include="Granit.Http.Idempotency" Version="0.1.0-dev.*" />
     <!-- AI / MCP -->
     <PackageVersion Include="Granit.AI" Version="0.1.0-dev.*" />
     <PackageVersion Include="Granit.AI.EntityFrameworkCore" Version="0.1.0-dev.*" />

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Ingestion.Endpoints</PackageId>
+    <Description>HTTP webhook endpoint (POST /iot/ingest/{source}) for IoT telemetry ingestion. Rate-limited, returns 202 Accepted.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit.Http.ApiDocumentation" />
+    <PackageReference Include="Granit.RateLimiting" />
+    <PackageReference Include="Granit.Validation" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+  </ItemGroup>
+</Project>

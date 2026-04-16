@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Wolverine</PackageId>
+    <Description>Wolverine handlers for the Granit.IoT module: persists telemetry, updates device heartbeat, evaluates thresholds.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
+    <ProjectReference Include="..\Granit.IoT.EntityFrameworkCore\Granit.IoT.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit.Events.Wolverine" />
+    <PackageReference Include="Granit.Settings" />
+    <PackageReference Include="Granit.Wolverine" />
+    <PackageReference Include="WolverineFx" />
+  </ItemGroup>
+</Project>

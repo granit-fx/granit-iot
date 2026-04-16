@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Ingestion</PackageId>
+    <Description>Provider-agnostic telemetry ingestion pipeline for IoT webhook receivers (signature validation, parsing, deduplication, outbox dispatch).</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Endpoints" />
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Scaleway" />
+    <InternalsVisibleTo Include="Granit.IoT.Wolverine" />
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Diagnostics" />
+    <PackageReference Include="Granit.Http.Idempotency" />
+    <PackageReference Include="Granit.Timing" />
+  </ItemGroup>
+</Project>
