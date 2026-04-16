@@ -7,8 +7,10 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Granit.IoT.EntityFrameworkCore" />
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion" />
     <InternalsVisibleTo Include="Granit.IoT.Wolverine" />
     <InternalsVisibleTo Include="Granit.IoT.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Tests" />
     <InternalsVisibleTo Include="Granit.IoT.Tests.Integration" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
