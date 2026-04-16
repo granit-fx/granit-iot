@@ -7,12 +7,17 @@
     <Project Path="src/Granit.IoT.Ingestion/Granit.IoT.Ingestion.csproj" />
     <Project Path="src/Granit.IoT.Ingestion.Endpoints/Granit.IoT.Ingestion.Endpoints.csproj" />
     <Project Path="src/Granit.IoT.Ingestion.Scaleway/Granit.IoT.Ingestion.Scaleway.csproj" />
+    <Project Path="src/Granit.IoT.Notifications/Granit.IoT.Notifications.csproj" />
     <Project Path="src/Granit.IoT.Wolverine/Granit.IoT.Wolverine.csproj" />
+  </Folder>
+  <Folder Name="/src/bundles/">
+    <Project Path="src/bundles/Granit.Bundle.IoT/Granit.Bundle.IoT.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Granit.IoT.Tests/Granit.IoT.Tests.csproj" />
     <Project Path="tests/Granit.IoT.EntityFrameworkCore.Tests/Granit.IoT.EntityFrameworkCore.Tests.csproj" />
     <Project Path="tests/Granit.IoT.ArchitectureTests/Granit.IoT.ArchitectureTests.csproj" />
     <Project Path="tests/Granit.IoT.Ingestion.Tests/Granit.IoT.Ingestion.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.Notifications.Tests/Granit.IoT.Notifications.Tests.csproj" />
   </Folder>
 </Solution>

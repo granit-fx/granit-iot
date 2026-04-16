@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.Bundle.IoT</PackageId>
+    <Description>Meta-package grouping the Phase-1 Granit.IoT modules: domain, persistence (PostgreSQL), endpoints, ingestion pipeline (+ Scaleway provider), Wolverine handlers, and the notifications bridge. Adds the full IoT stack to a Granit application via builder.AddIoT().</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Granit.IoT\Granit.IoT.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.EntityFrameworkCore\Granit.IoT.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.EntityFrameworkCore.Postgres\Granit.IoT.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Endpoints\Granit.IoT.Endpoints.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Ingestion.Endpoints\Granit.IoT.Ingestion.Endpoints.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Ingestion.Scaleway\Granit.IoT.Ingestion.Scaleway.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Wolverine\Granit.IoT.Wolverine.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Notifications\Granit.IoT.Notifications.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+  </ItemGroup>
+</Project>

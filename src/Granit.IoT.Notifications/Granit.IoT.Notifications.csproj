@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Notifications</PackageId>
+    <Description>Bridge from IoT integration events (telemetry threshold breaches, device offline) to Granit.Notifications for multi-channel delivery (email, push, SMS).</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Notifications.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    <InternalsVisibleTo Include="WolverineHandlers" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Caching" />
+    <PackageReference Include="Granit.Notifications.Abstractions" />
+    <PackageReference Include="Granit.Settings" />
+  </ItemGroup>
+</Project>
