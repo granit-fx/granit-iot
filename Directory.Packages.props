@@ -39,6 +39,7 @@
     <PackageVersion Include="Granit.Encryption.EntityFrameworkCore" Version="0.1.0-dev.*" />
     <!-- Notifications -->
     <PackageVersion Include="Granit.Notifications" Version="0.1.0-dev.*" />
+    <PackageVersion Include="Granit.Notifications.Abstractions" Version="0.1.0-dev.*" />
     <PackageVersion Include="Granit.Notifications.EntityFrameworkCore" Version="0.1.0-dev.*" />
     <!-- Timeline -->
     <PackageVersion Include="Granit.Timeline" Version="0.1.0-dev.*" />
