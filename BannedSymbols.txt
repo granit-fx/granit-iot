@@ -1,0 +1,46 @@
+# ===================================================================
+# BannedSymbols.txt — Granit IoT
+# Enforced by Microsoft.CodeAnalysis.BannedApiAnalyzers (RS0030)
+#
+# Complementary to Granit.Analyzers custom rules:
+#   GRSEC001 = DateTime.Now/UtcNow (with IClock code fix)
+#   GRSEC002 = Guid.NewGuid() (with IGuidGenerator code fix)
+#   GRSEC004 = Direct cookie access (with IGranitCookieManager code fix)
+#   GREF001  = Synchronous SaveChanges (with async code fix)
+# ===================================================================
+
+# --- HttpClient: must use IHttpClientFactory (architecture.md) ---
+M:System.Net.Http.HttpClient.#ctor; Use IHttpClientFactory instead of new HttpClient() — socket exhaustion risk
+M:System.Net.Http.HttpClient.#ctor(System.Net.Http.HttpMessageHandler); Use IHttpClientFactory instead of new HttpClient()
+M:System.Net.Http.HttpClient.#ctor(System.Net.Http.HttpMessageHandler,System.Boolean); Use IHttpClientFactory instead of new HttpClient()
+
+# --- Regex: must use [GeneratedRegex] (CLAUDE.md) ---
+M:System.Text.RegularExpressions.Regex.#ctor(System.String); Use [GeneratedRegex] attribute instead of new Regex()
+M:System.Text.RegularExpressions.Regex.#ctor(System.String,System.Text.RegularExpressions.RegexOptions); Use [GeneratedRegex] attribute instead of new Regex()
+M:System.Text.RegularExpressions.Regex.#ctor(System.String,System.Text.RegularExpressions.RegexOptions,System.TimeSpan); Use [GeneratedRegex] attribute instead of new Regex()
+
+# --- Thread.Sleep: use Task.Delay or TimeProvider ---
+M:System.Threading.Thread.Sleep(System.Int32); Use Task.Delay() or TimeProvider instead of Thread.Sleep()
+M:System.Threading.Thread.Sleep(System.TimeSpan); Use Task.Delay() or TimeProvider instead of Thread.Sleep()
+
+# --- Sync-over-async: causes deadlocks in library code ---
+P:System.Threading.Tasks.Task`1.Result; Avoid sync-over-async — use await instead of .Result
+M:System.Threading.Tasks.Task.Wait; Avoid sync-over-async — use await instead of .Wait()
+M:System.Threading.Tasks.Task.Wait(System.Int32); Avoid sync-over-async — use await instead of .Wait()
+M:System.Threading.Tasks.Task.Wait(System.TimeSpan); Avoid sync-over-async — use await instead of .Wait()
+M:System.Threading.Tasks.Task.Wait(System.Threading.CancellationToken); Avoid sync-over-async — use await instead of .Wait()
+M:System.Threading.Tasks.Task.Wait(System.Int32,System.Threading.CancellationToken); Avoid sync-over-async — use await instead of .Wait()
+
+# --- GC.Collect: never in library code ---
+M:System.GC.Collect; GC.Collect() is forbidden in library code
+M:System.GC.Collect(System.Int32); GC.Collect() is forbidden in library code
+M:System.GC.Collect(System.Int32,System.GCCollectionMode); GC.Collect() is forbidden in library code
+
+# --- Console: use ILogger + [LoggerMessage] ---
+M:System.Console.Write(System.String); Use ILogger instead of Console.Write
+M:System.Console.WriteLine; Use ILogger instead of Console.WriteLine
+M:System.Console.WriteLine(System.String); Use ILogger instead of Console.WriteLine
+
+# --- Environment variables: use IConfiguration ---
+M:System.Environment.GetEnvironmentVariable(System.String); Use IConfiguration instead of Environment.GetEnvironmentVariable
+M:System.Environment.GetEnvironmentVariable(System.String,System.EnvironmentVariableTarget); Use IConfiguration instead of Environment.GetEnvironmentVariable

@@ -1,0 +1,243 @@
+# =============================================================================
+# GitHub Actions CI/CD - Granit IoT
+# =============================================================================
+# Pipeline: build+format → test → security → sbom
+#
+# Required secrets:
+#   GRANIT_PACKAGES_TOKEN — GitHub Packages token for the Granit.* NuGet feed
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+  pull_request:
+    branches: [develop, main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Default all permissions to read — each job declares write only where needed.
+# Required by OpenSSF Scorecard: Token-Permissions check.
+permissions: read-all
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  CONFIGURATION: Release
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # BUILD + FORMAT CHECK (shared gate — fails fast before tests)
+  # ---------------------------------------------------------------------------
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: NuGet cache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Create local NuGet source directory
+        run: mkdir -p local-nuget
+
+      - name: Authenticate GitHub Packages
+        env:
+          GRANIT_PACKAGES_TOKEN: ${{ secrets.GRANIT_PACKAGES_TOKEN }}
+        run: >
+          dotnet nuget update source granit-registry
+          --username granit-fx
+          --password "$GRANIT_PACKAGES_TOKEN"
+          --store-password-in-clear-text
+          --configfile nuget.config
+
+      - name: Build
+        run: dotnet build Granit.IoT.slnx -c $CONFIGURATION
+
+      - name: Format check
+        run: dotnet format Granit.IoT.slnx --verify-no-changes --no-restore
+
+  # ---------------------------------------------------------------------------
+  # UNIT TESTS
+  # ---------------------------------------------------------------------------
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: NuGet cache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Authenticate GitHub Packages
+        env:
+          GRANIT_PACKAGES_TOKEN: ${{ secrets.GRANIT_PACKAGES_TOKEN }}
+        run: >
+          dotnet nuget update source granit-registry
+          --username granit-fx
+          --password "$GRANIT_PACKAGES_TOKEN"
+          --store-password-in-clear-text
+          --configfile nuget.config
+
+      - name: Build
+        run: >
+          dotnet build Granit.IoT.slnx
+          -c $CONFIGURATION
+          -p:RunAnalyzers=false
+          -p:EnforceCodeStyleInBuild=false
+
+      - name: Test
+        run: >
+          dotnet test Granit.IoT.slnx
+          -c $CONFIGURATION --no-build
+          --logger "trx;LogFilePath=TestResults/results.trx"
+          --collect:"XPlat Code Coverage"
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: test-results
+          path: "**/TestResults/"
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # SECURITY (parallel, no build dependency)
+  # ---------------------------------------------------------------------------
+  secret-detection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Install Gitleaks
+        run: |
+          GITLEAKS_VERSION=8.30.0
+          curl --proto '=https' -sSfL \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /usr/local/bin gitleaks
+
+      - name: Gitleaks scan
+        run: gitleaks detect --source . --verbose --log-opts="--all"
+
+  audit:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Authenticate GitHub Packages
+        env:
+          GRANIT_PACKAGES_TOKEN: ${{ secrets.GRANIT_PACKAGES_TOKEN }}
+        run: >
+          dotnet nuget update source granit-registry
+          --username granit-fx
+          --password "$GRANIT_PACKAGES_TOKEN"
+          --store-password-in-clear-text
+          --configfile nuget.config
+
+      - name: Check vulnerable packages
+        run: |
+          dotnet restore Granit.IoT.slnx
+          dotnet list Granit.IoT.slnx package --vulnerable --include-transitive 2>&1 | tee vulnerability-report.txt
+          ! grep -q "has the following vulnerable packages" vulnerability-report.txt
+
+      - name: Upload vulnerability report
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: vulnerability-report
+          path: vulnerability-report.txt
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # SBOM — CycloneDX JSON, uploaded as artifact and attached to releases
+  # ---------------------------------------------------------------------------
+  sbom:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write  # read for checkout, write for release asset upload
+      packages: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: NuGet cache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Authenticate GitHub Packages
+        env:
+          GRANIT_PACKAGES_TOKEN: ${{ secrets.GRANIT_PACKAGES_TOKEN }}
+        run: >
+          dotnet nuget update source granit-registry
+          --username granit-fx
+          --password "$GRANIT_PACKAGES_TOKEN"
+          --store-password-in-clear-text
+          --configfile nuget.config
+
+      - name: Install CycloneDX
+        run: dotnet tool install --global CycloneDX
+
+      - name: Generate SBOM
+        run: dotnet CycloneDX Granit.IoT.slnx -o ./sbom --json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: sbom
+          path: sbom/bom.json
+          retention-days: 90
+
+      - name: Attach SBOM to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload ${{ github.ref_name }} sbom/bom.json --clobber

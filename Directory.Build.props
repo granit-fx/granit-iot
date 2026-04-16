@@ -1,0 +1,40 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <NoWarn>CA1848;CA1707;CA1305;CA1861;NU1608;GRMOD001</NoWarn>
+  </PropertyGroup>
+
+  <!-- ASP.NET Core framework reference for module projects (endpoints need MVC attributes) -->
+  <ItemGroup Condition="'$(IsAspireSharedProject)' != 'true' and '$(IsAspireHost)' != 'true' and '$(UsingMicrosoftNETSdkWeb)' != 'true'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <!-- Security: force MimeKit to patched version (GHSA-g7hc-96xr-gvvx) -->
+  <!-- NU1608 already suppressed above — this pattern is intentional -->
+  <ItemGroup>
+    <PackageReference Include="MimeKit" />
+  </ItemGroup>
+
+  <!-- BannedApiAnalyzers: compile-time enforcement of banned APIs -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.txt" />
+  </ItemGroup>
+
+  <!-- Roslyn analyzers (applies to all projects) -->
+  <ItemGroup>
+    <PackageReference Include="Granit.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
