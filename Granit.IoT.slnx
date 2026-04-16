@@ -4,10 +4,15 @@
     <Project Path="src/Granit.IoT.EntityFrameworkCore/Granit.IoT.EntityFrameworkCore.csproj" />
     <Project Path="src/Granit.IoT.Endpoints/Granit.IoT.Endpoints.csproj" />
     <Project Path="src/Granit.IoT.EntityFrameworkCore.Postgres/Granit.IoT.EntityFrameworkCore.Postgres.csproj" />
+    <Project Path="src/Granit.IoT.Ingestion/Granit.IoT.Ingestion.csproj" />
+    <Project Path="src/Granit.IoT.Ingestion.Endpoints/Granit.IoT.Ingestion.Endpoints.csproj" />
+    <Project Path="src/Granit.IoT.Ingestion.Scaleway/Granit.IoT.Ingestion.Scaleway.csproj" />
+    <Project Path="src/Granit.IoT.Wolverine/Granit.IoT.Wolverine.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Granit.IoT.Tests/Granit.IoT.Tests.csproj" />
     <Project Path="tests/Granit.IoT.EntityFrameworkCore.Tests/Granit.IoT.EntityFrameworkCore.Tests.csproj" />
     <Project Path="tests/Granit.IoT.ArchitectureTests/Granit.IoT.ArchitectureTests.csproj" />
+    <Project Path="tests/Granit.IoT.Ingestion.Tests/Granit.IoT.Ingestion.Tests.csproj" />
   </Folder>
 </Solution>

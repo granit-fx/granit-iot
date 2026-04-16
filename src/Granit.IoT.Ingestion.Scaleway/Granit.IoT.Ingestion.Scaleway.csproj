@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Ingestion.Scaleway</PackageId>
+    <Description>Scaleway IoT Hub provider for the Granit ingestion pipeline (HMAC-SHA256 signature validator + MQTT envelope parser).</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
+  </ItemGroup>
+</Project>

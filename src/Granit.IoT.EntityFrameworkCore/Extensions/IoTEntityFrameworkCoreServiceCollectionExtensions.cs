@@ -17,6 +17,7 @@ public static class IoTEntityFrameworkCoreServiceCollectionExtensions
 
         services.TryAddScoped<IDeviceReader, DeviceEfCoreReader>();
         services.TryAddScoped<IDeviceWriter, DeviceEfCoreWriter>();
+        services.TryAddScoped<IDeviceLookup, DeviceLookupEfCore>();
         services.TryAddScoped<ITelemetryReader, TelemetryEfCoreReader>();
         services.TryAddScoped<ITelemetryWriter, TelemetryEfCoreWriter>();
 

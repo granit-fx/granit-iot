@@ -2,15 +2,10 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
-    <!-- Exclude from dotnet test in CI unit-test job (runs in dedicated architecture-test job). -->
-    <IsTestProject Condition="'$(SkipArchitectureTests)' == 'true'">false</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Granit.IoT\Granit.IoT.csproj" />
-    <ProjectReference Include="..\..\src\Granit.IoT.EntityFrameworkCore\Granit.IoT.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\..\src\Granit.IoT.EntityFrameworkCore.Postgres\Granit.IoT.EntityFrameworkCore.Postgres.csproj" />
-    <ProjectReference Include="..\..\src\Granit.IoT.Endpoints\Granit.IoT.Endpoints.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Ingestion.Endpoints\Granit.IoT.Ingestion.Endpoints.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Ingestion.Scaleway\Granit.IoT.Ingestion.Scaleway.csproj" />
@@ -18,12 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" />
     <PackageReference Include="coverlet.collector" />
-    <PackageReference Include="Granit.ArchitectureTests.Abstractions" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NSubstitute" />
     <PackageReference Include="Shouldly" />
-    <PackageReference Include="TngTech.ArchUnitNET" />
-    <PackageReference Include="TngTech.ArchUnitNET.xUnit" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
