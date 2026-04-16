@@ -1,21 +1,20 @@
 # Avis relatifs aux composants tiers — granit-iot
 
-Ce fichier repertorie les bibliotheques tierces utilisees par le projet
-**granit-iot** ainsi que leurs licences respectives. Il est mis a jour
-a chaque ajout ou modification de dependance externe.
+Ce fichier répertorie les bibliothèques tierces utilisées par le projet
+**granit-iot** ainsi que leurs licences respectives. Il est mis à jour
+à chaque ajout ou modification de dépendance externe.
 
-Derniere mise a jour : 2026-04-16
+Dernière mise à jour : 2026-04-16
 
 ---
 
-## Recapitulatif des licences
+## Récapitulatif des licences
 
 | Licence      | Nombre de packages |
 | ------------ | ------------------ |
-| Apache-2.0   | 26                 |
-| MIT          | 7                  |
-| BSD-2-Clause | 1                  |
-| BSD-3-Clause | 1                  |
+| Apache-2.0   | 27                 |
+| MIT          | 6                  |
+| BSD-3-Clause | 2                  |
 | PostgreSQL   | 1                  |
 
 Toutes les licences sont permissives et compatibles avec la distribution
@@ -23,125 +22,95 @@ Apache-2.0 du projet granit-iot.
 
 ---
 
-## Dependances de production
+## Dépendances de production
 
 ### Granit framework (Apache-2.0)
 
-Packages internes publies depuis `granit-fx/granit-dotnet`.
-Copyright (c) Digital Dynamics.
+Packages internes publiés depuis `granit-fx/granit-dotnet`.
 
-| Package                                | Version     | Licence    |
-| -------------------------------------- | ----------- | ---------- |
-| Granit                                 | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Authorization                   | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Diagnostics                     | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Encryption                      | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Events.Wolverine                | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Guids                           | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Http.ApiDocumentation           | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Http.Idempotency                | 0.1.0-dev.* | Apache-2.0 |
-| Granit.MultiTenancy                    | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Persistence                     | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Persistence.EntityFrameworkCore | 0.1.0-dev.* | Apache-2.0 |
-| Granit.RateLimiting                    | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Settings                        | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Timeline                        | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Timing                          | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Validation                      | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Wolverine                       | 0.1.0-dev.* | Apache-2.0 |
-| Granit.Workflow                        | 0.1.0-dev.* | Apache-2.0 |
+| Package                                | Version     | Copyright             |
+| -------------------------------------- | ----------- | --------------------- |
+| Granit                                 | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Authorization                   | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Diagnostics                     | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Encryption                      | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Events.Wolverine                | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Guids                           | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Http.ApiDocumentation           | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Http.Idempotency                | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.MultiTenancy                    | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Persistence                     | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Persistence.EntityFrameworkCore | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.RateLimiting                    | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Settings                        | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Timeline                        | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Timing                          | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Validation                      | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Wolverine                       | 0.1.0-dev.* | (c) Digital Dynamics  |
+| Granit.Workflow                        | 0.1.0-dev.* | (c) Digital Dynamics  |
 
-### Validation (Apache-2.0)
+### Apache-2.0 (tiers)
 
-Copyright (c) .NET Foundation and contributors.
+| Package                                        | Version | Copyright                                                   |
+| ---------------------------------------------- | ------- | ----------------------------------------------------------- |
+| FluentValidation                               | 12.*    | Copyright (c) Jeremy Skinner, .NET Foundation 2008-2025     |
+| FluentValidation.DependencyInjectionExtensions | 12.*    | Copyright (c) Jeremy Skinner, .NET Foundation 2008-2025     |
 
-| Package                                        | Version | Licence    |
-| ---------------------------------------------- | ------- | ---------- |
-| FluentValidation                               | 12.*    | Apache-2.0 |
-| FluentValidation.DependencyInjectionExtensions | 12.*    | Apache-2.0 |
+### MIT
 
-### ASP.NET Core / Microsoft (MIT)
+| Package                      | Version | Copyright                 |
+| ---------------------------- | ------- | ------------------------- |
+| Microsoft.AspNetCore.OpenApi | 10.*    | (c) Microsoft Corporation |
+| WolverineFx                  | 5.31.*  | JasperFx Contributors     |
 
-Copyright (c) .NET Foundation and contributors.
+### PostgreSQL License
 
-| Package                      | Version | Licence |
-| ---------------------------- | ------- | ------- |
-| Microsoft.AspNetCore.OpenApi | 10.*    | MIT     |
-
-### Messaging / CQRS (MIT)
-
-Copyright (c) Jeremy D. Miller, Team JasperFx.
-
-| Package     | Version | Licence |
-| ----------- | ------- | ------- |
-| WolverineFx | 5.31.*  | MIT     |
-
-### PostgreSQL data provider (PostgreSQL License)
-
-Copyright (c) The Npgsql Development Team.
-
-| Package                               | Version | Licence    |
-| ------------------------------------- | ------- | ---------- |
-| Npgsql.EntityFrameworkCore.PostgreSQL | 10.*    | PostgreSQL |
+| Package                               | Version | Copyright                                  |
+| ------------------------------------- | ------- | ------------------------------------------ |
+| Npgsql.EntityFrameworkCore.PostgreSQL | 10.*    | Copyright 2025 The Npgsql Development Team |
 
 > La licence PostgreSQL est une licence permissive de style BSD-2, compatible
 > avec une redistribution Apache-2.0.
 
 ---
 
-## Dependances de test uniquement
+## Dépendances de test uniquement
 
-### Frameworks de test (Apache-2.0 / MIT)
+### MIT (tests)
 
-| Package                   | Version | Licence    | Copyright                                         |
-| ------------------------- | ------- | ---------- | ------------------------------------------------- |
-| xunit.v3                  | 3.*     | Apache-2.0 | Copyright (c) .NET Foundation, xUnit contributors |
-| xunit.runner.visualstudio | 3.*     | MIT        | Copyright (c) .NET Foundation, xUnit contributors |
-| Microsoft.NET.Test.Sdk    | 18.*    | MIT        | Copyright (c) Microsoft Corporation               |
-| coverlet.collector        | 8.*     | MIT        | Copyright (c) .NET Foundation                     |
+| Package                              | Version | Copyright                       |
+| ------------------------------------ | ------- | ------------------------------- |
+| Bogus                                | 35.*    | Copyright (c) 2015 Brian Chavez |
+| coverlet.collector                   | 8.*     | (c) 2018 Toni Solarin-Sodara    |
+| Microsoft.EntityFrameworkCore.Sqlite | 10.*    | (c) Microsoft Corporation       |
+| Microsoft.NET.Test.Sdk               | 18.*    | (c) Microsoft Corporation       |
 
-### Assertions & mocks
+### Apache-2.0 (tests)
 
-| Package     | Version | Licence      | Copyright                              |
-| ----------- | ------- | ------------ | -------------------------------------- |
-| Shouldly    | 4.*     | BSD-2-Clause | Copyright (c) Shouldly contributors    |
-| NSubstitute | 5.*     | BSD-3-Clause | Copyright (c) NSubstitute contributors |
+| Package                               | Version     | Copyright                                              |
+| ------------------------------------- | ----------- | ------------------------------------------------------ |
+| Granit.ArchitectureTests.Abstractions | 0.1.0-dev.* | (c) Digital Dynamics                                   |
+| TngTech.ArchUnitNET                   | 0.13.*      | Copyright (c) 2019-2025 TNG Technology Consulting GmbH |
+| TngTech.ArchUnitNET.xUnit             | 0.13.*      | Copyright (c) 2019-2025 TNG Technology Consulting GmbH |
+| xunit.v3                              | 3.*         | Copyright (C) .NET Foundation                          |
+| xunit.runner.visualstudio             | 3.*         | Copyright (C) .NET Foundation                          |
 
-### Donnees synthetiques (MIT)
+### BSD-3-Clause
 
-| Package | Version | Licence |
-| ------- | ------- | ------- |
-| Bogus   | 35.*    | MIT     |
-
-> Copyright (c) Brian Chavez.
-
-### Tests d'architecture (Apache-2.0)
-
-| Package                               | Version     | Licence    |
-| ------------------------------------- | ----------- | ---------- |
-| TngTech.ArchUnitNET                   | 0.13.*      | Apache-2.0 |
-| TngTech.ArchUnitNET.xUnit             | 0.13.*      | Apache-2.0 |
-| Granit.ArchitectureTests.Abstractions | 0.1.0-dev.* | Apache-2.0 |
-
-> ArchUnitNET : Copyright (c) TNG Technology Consulting GmbH.
-
-### EF Core provider SQLite (MIT)
-
-Utilise uniquement comme base en memoire pour les tests d'integration EF Core.
-Copyright (c) .NET Foundation and contributors.
-
-| Package                              | Version | Licence |
-| ------------------------------------ | ------- | ------- |
-| Microsoft.EntityFrameworkCore.Sqlite | 10.*    | MIT     |
+| Package     | Version | Copyright                                |
+| ----------- | ------- | ---------------------------------------- |
+| NSubstitute | 5.*     | NSubstitute Contributors                 |
+| Shouldly    | 4.*     | Copyright (c) 2017 Shouldly Contributors |
 
 ---
 
 ## Notes
 
-- Les versions avec `*` suivent le versionnement flottant centralise dans
+- Les versions avec `*` suivent le versionnement flottant centralisé dans
   `Directory.Packages.props`.
-- Aucune dependance sous licence copyleft (GPL, LGPL, AGPL, SSPL) n'est
-  utilisee. Toute nouvelle dependance sous licence non permissive doit
-  etre signalee avant integration, conformement aux regles du repo.
-- Les transitions de licences (rotation, changement amont) sont surveillees
-  lors des mises a jour de dependances.
+- Les licences et attributions sont alignées avec
+  [granit-dotnet/THIRD-PARTY-NOTICES.md](https://github.com/granit-fx/granit-dotnet/blob/main/THIRD-PARTY-NOTICES.md)
+  pour toute dépendance déjà présente en amont.
+- Aucune dépendance sous licence copyleft (GPL, LGPL, AGPL, SSPL) n'est
+  utilisée. Toute nouvelle dépendance sous licence non permissive doit
+  être signalée avant intégration, conformément aux règles du repo.

@@ -11,6 +11,10 @@
     <ProjectReference Include="..\..\src\Granit.IoT.EntityFrameworkCore\Granit.IoT.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.EntityFrameworkCore.Postgres\Granit.IoT.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Endpoints\Granit.IoT.Endpoints.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Ingestion.Endpoints\Granit.IoT.Ingestion.Endpoints.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Ingestion.Scaleway\Granit.IoT.Ingestion.Scaleway.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Wolverine\Granit.IoT.Wolverine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
