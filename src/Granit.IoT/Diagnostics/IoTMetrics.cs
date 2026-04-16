@@ -20,6 +20,7 @@ public sealed class IoTMetrics
     private readonly Counter<long> _ingestionDuplicateSkipped;
     private readonly Counter<long> _ingestionUnknownDevice;
     private readonly Counter<long> _ingestionThresholdExceeded;
+    private readonly Counter<long> _alertsThrottled;
 
     public IoTMetrics(IMeterFactory meterFactory)
     {
@@ -48,6 +49,10 @@ public sealed class IoTMetrics
         _ingestionThresholdExceeded = meter.CreateCounter<long>(
             "granit.iot.ingestion.threshold_exceeded",
             description: "Number of telemetry metrics that breached a configured threshold.");
+
+        _alertsThrottled = meter.CreateCounter<long>(
+            "granit.iot.alerts.throttled",
+            description: "Number of threshold-alert notifications suppressed because an alert for the same (device, metric) was published within the throttle window.");
     }
 
     public void RecordTelemetryIngested(string? tenantId, string source) =>
@@ -86,6 +91,13 @@ public sealed class IoTMetrics
 
     public void RecordIngestionThresholdExceeded(string? tenantId, string metricName) =>
         _ingestionThresholdExceeded.Add(1, new TagList
+        {
+            { TagTenantId, tenantId ?? DefaultTenant },
+            { "metric_name", metricName },
+        });
+
+    public void RecordAlertThrottled(string? tenantId, string metricName) =>
+        _alertsThrottled.Add(1, new TagList
         {
             { TagTenantId, tenantId ?? DefaultTenant },
             { "metric_name", metricName },
