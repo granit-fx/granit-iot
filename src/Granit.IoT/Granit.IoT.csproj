@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT</PackageId>
+    <Description>IoT device management abstractions, DDD domain model, and events for Granit applications.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.EntityFrameworkCore" />
+    <InternalsVisibleTo Include="Granit.IoT.Wolverine" />
+    <InternalsVisibleTo Include="Granit.IoT.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.Tests.Integration" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Diagnostics" />
+    <PackageReference Include="Granit.Encryption" />
+    <PackageReference Include="Granit.Timeline" />
+    <PackageReference Include="Granit.Workflow" />
+  </ItemGroup>
+</Project>

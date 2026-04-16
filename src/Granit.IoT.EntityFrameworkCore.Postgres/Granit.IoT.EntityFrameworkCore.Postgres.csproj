@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.EntityFrameworkCore.Postgres</PackageId>
+    <Description>PostgreSQL-specific optimizations for Granit.IoT — BRIN/GIN indexes, jsonb column mapping, and time-series partitioning.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Tests.Integration" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.EntityFrameworkCore\Granit.IoT.EntityFrameworkCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+</Project>

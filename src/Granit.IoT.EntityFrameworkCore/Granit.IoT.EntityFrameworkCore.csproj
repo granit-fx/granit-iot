@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.EntityFrameworkCore</PackageId>
+    <Description>EF Core persistence layer for the Granit.IoT module — isolated IoTDbContext with time-series optimized schema.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.EntityFrameworkCore.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit.MultiTenancy" />
+    <PackageReference Include="Granit.Persistence" />
+    <PackageReference Include="Granit.Persistence.EntityFrameworkCore" />
+  </ItemGroup>
+</Project>
