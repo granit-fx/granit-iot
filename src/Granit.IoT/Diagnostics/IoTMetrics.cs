@@ -17,6 +17,9 @@ public sealed class IoTMetrics
     private readonly Counter<long> _telemetryIngested;
     private readonly Counter<long> _deviceOfflineDetected;
     private readonly Counter<long> _ingestionSignatureRejected;
+    private readonly Counter<long> _ingestionDuplicateSkipped;
+    private readonly Counter<long> _ingestionUnknownDevice;
+    private readonly Counter<long> _ingestionThresholdExceeded;
 
     public IoTMetrics(IMeterFactory meterFactory)
     {
@@ -33,6 +36,18 @@ public sealed class IoTMetrics
         _ingestionSignatureRejected = meter.CreateCounter<long>(
             "granit.iot.ingestion.signature_rejected",
             description: "Number of ingestion requests rejected due to invalid HMAC signature.");
+
+        _ingestionDuplicateSkipped = meter.CreateCounter<long>(
+            "granit.iot.ingestion.duplicate_skipped",
+            description: "Number of ingestion requests skipped because the transport message id was already seen.");
+
+        _ingestionUnknownDevice = meter.CreateCounter<long>(
+            "granit.iot.ingestion.unknown_device",
+            description: "Number of telemetry payloads that referenced an unknown device serial number.");
+
+        _ingestionThresholdExceeded = meter.CreateCounter<long>(
+            "granit.iot.ingestion.threshold_exceeded",
+            description: "Number of telemetry metrics that breached a configured threshold.");
     }
 
     public void RecordTelemetryIngested(string? tenantId, string source) =>
@@ -53,5 +68,26 @@ public sealed class IoTMetrics
         {
             { TagTenantId, tenantId ?? DefaultTenant },
             { TagSource, source },
+        });
+
+    public void RecordIngestionDuplicateSkipped(string? tenantId, string source) =>
+        _ingestionDuplicateSkipped.Add(1, new TagList
+        {
+            { TagTenantId, tenantId ?? DefaultTenant },
+            { TagSource, source },
+        });
+
+    public void RecordIngestionUnknownDevice(string? tenantId, string source) =>
+        _ingestionUnknownDevice.Add(1, new TagList
+        {
+            { TagTenantId, tenantId ?? DefaultTenant },
+            { TagSource, source },
+        });
+
+    public void RecordIngestionThresholdExceeded(string? tenantId, string metricName) =>
+        _ingestionThresholdExceeded.Add(1, new TagList
+        {
+            { TagTenantId, tenantId ?? DefaultTenant },
+            { "metric_name", metricName },
         });
 }
