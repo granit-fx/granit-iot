@@ -1,0 +1,11 @@
+[extend]
+useDefault = true
+
+[allowlist]
+  description = "Global allowlist for false positives"
+
+  # Test fixtures: HMAC shared secrets and similar high-entropy values used in
+  # signature validation tests are synthetic constants, not real credentials.
+  paths = [
+    '''tests/.*Tests.*\.cs$''',
+  ]
