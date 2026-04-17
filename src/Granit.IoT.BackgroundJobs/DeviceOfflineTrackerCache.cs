@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Granit.IoT.BackgroundJobs.Internal;
+namespace Granit.IoT.BackgroundJobs;
 
 /// <summary>
 /// Process-local debouncing cache: keeps a device flagged as already-alerted

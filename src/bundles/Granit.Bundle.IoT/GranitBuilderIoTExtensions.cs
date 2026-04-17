@@ -1,10 +1,12 @@
 using Granit.IoT;
+using Granit.IoT.BackgroundJobs;
 using Granit.IoT.Endpoints;
 using Granit.IoT.EntityFrameworkCore;
 using Granit.IoT.Ingestion;
 using Granit.IoT.Ingestion.Endpoints;
 using Granit.IoT.Ingestion.Scaleway;
 using Granit.IoT.Notifications;
+using Granit.IoT.Timeline;
 using Granit.IoT.Wolverine;
 using Granit.Modularity;
 
@@ -35,6 +37,8 @@ public static class GranitBuilderIoTExtensions
         builder.AddModule<GranitIoTIngestionScalewayModule>();
         builder.AddModule<GranitIoTWolverineModule>();
         builder.AddModule<GranitIoTNotificationsModule>();
+        builder.AddModule<GranitIoTBackgroundJobsModule>();
+        builder.AddModule<GranitIoTTimelineModule>();
         return builder;
     }
 }
