@@ -1,6 +1,7 @@
+using Granit.IoT.BackgroundJobs.Internal;
 using Granit.IoT.Events;
 
-namespace Granit.IoT.BackgroundJobs.Internal;
+namespace Granit.IoT.BackgroundJobs.Handlers;
 
 /// <summary>
 /// Wolverine handler that clears the offline-tracker entry for a device
