@@ -52,6 +52,7 @@ internal static class IngestionEndpoints
         ReadOnlyMemory<byte> body = memory.ToArray();
 
         Dictionary<string, string> headers = SnapshotHeaders(request.Headers);
+        InjectServerControlledRequestHeaders(headers, request);
 
         IngestionResult result = await pipeline
             .ProcessAsync(source, body, headers, cancellationToken)
@@ -87,6 +88,31 @@ internal static class IngestionEndpoints
 
         return MediaTypeHeaderValue.TryParse(contentType, out MediaTypeHeaderValue? parsed)
             && string.Equals(parsed.MediaType.Value, JsonContentType, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Strips any client-provided <c>granit-request-*</c> headers and replaces
+    /// them with values derived from <see cref="HttpRequest"/>. Trust boundary:
+    /// an attacker who sets these headers themselves could otherwise forge
+    /// the canonical request a SigV4 validator reconstructs.
+    /// </summary>
+    private static void InjectServerControlledRequestHeaders(
+        Dictionary<string, string> headers,
+        HttpRequest request)
+    {
+        var keysToRemove = headers.Keys
+            .Where(k => k.StartsWith(IngestionRequestHeaders.ServerControlledPrefix, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        foreach (string key in keysToRemove)
+        {
+            headers.Remove(key);
+        }
+
+        headers[IngestionRequestHeaders.Method] = request.Method.ToUpperInvariant();
+        headers[IngestionRequestHeaders.Path] = request.Path.HasValue ? request.Path.Value! : "/";
+        headers[IngestionRequestHeaders.Query] = request.QueryString.HasValue
+            ? request.QueryString.Value!.TrimStart('?')
+            : string.Empty;
     }
 
     private static Dictionary<string, string> SnapshotHeaders(IHeaderDictionary headers)

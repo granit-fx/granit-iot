@@ -41,6 +41,14 @@ public static class IoTIngestionAwsServiceCollectionExtensions
         services.AddSingleton<IPayloadSignatureValidator, SnsPayloadSignatureValidator>();
 
         services.TryAddSingleton<ISigV4RequestValidator, DefaultSigV4RequestValidator>();
+        services.AddSingleton<IPayloadSignatureValidator, DirectPayloadSignatureValidator>();
+        services.AddSingleton<IPayloadSignatureValidator, ApiGatewayPayloadSignatureValidator>();
+
+        services.AddSingleton<IInboundMessageParser>(_ =>
+            new AwsIoTRulePayloadParser(AwsIoTIngestionConstants.DirectSourceName));
+        services.AddSingleton<IInboundMessageParser>(_ =>
+            new AwsIoTRulePayloadParser(AwsIoTIngestionConstants.ApiGatewaySourceName));
+        services.AddSingleton<IInboundMessageParser, AwsIoTSnsPayloadParser>();
 
         return services;
     }
