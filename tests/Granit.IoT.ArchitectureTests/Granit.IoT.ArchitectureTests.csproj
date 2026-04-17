@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\src\Granit.IoT.Aws\Granit.IoT.Aws.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Aws.EntityFrameworkCore\Granit.IoT.Aws.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Aws.Provisioning\Granit.IoT.Aws.Provisioning.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Aws.Shadow\Granit.IoT.Aws.Shadow.csproj" />
   </ItemGroup>
 
   <ItemGroup>
