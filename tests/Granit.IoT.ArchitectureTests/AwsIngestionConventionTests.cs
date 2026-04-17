@@ -13,6 +13,7 @@ public sealed class AwsIngestionConventionTests
 {
     private const string AwsNamespacePrefix = "Granit.IoT.Ingestion.Aws";
     private const string InternalNamespacePrefix = "Granit.IoT.Ingestion.Aws.Internal";
+    private const string SigV4NamespacePrefix = "Granit.IoT.Ingestion.Aws.Internal.SigV4";
     private const string ValidatorInterface = "Granit.IoT.Ingestion.Abstractions.IPayloadSignatureValidator";
 
     private static readonly ArchUnitNET.Domain.Architecture Architecture = IoTArchitecture.Instance;
@@ -38,6 +39,21 @@ public sealed class AwsIngestionConventionTests
 
         publicTypes.ShouldBeEmpty(
             "Types under Granit.IoT.Ingestion.Aws.Internal must be internal. " +
+            $"Violators: {string.Join(", ", publicTypes.Select(c => c.FullName))}");
+    }
+
+    [Fact]
+    public void SigV4_helper_types_stay_under_Internal_SigV4_namespace()
+    {
+        // Crypto primitives (canonical request, signing key derivation) must
+        // not leak into the public surface — only ISigV4RequestValidator and
+        // ISigV4SigningKeyProvider are intended consumer contracts.
+        IEnumerable<Class> publicTypes = Architecture.Classes
+            .Where(c => c.FullName.StartsWith(SigV4NamespacePrefix, StringComparison.Ordinal))
+            .Where(c => c.Visibility == Visibility.Public);
+
+        publicTypes.ShouldBeEmpty(
+            "SigV4 internals (canonical request builder, signing key derivation) must remain internal. " +
             $"Violators: {string.Join(", ", publicTypes.Select(c => c.FullName))}");
     }
 

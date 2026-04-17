@@ -1,6 +1,7 @@
 using Granit.IoT.Ingestion.Abstractions;
 using Granit.IoT.Ingestion.Aws.Diagnostics;
 using Granit.IoT.Ingestion.Aws.Internal;
+using Granit.IoT.Ingestion.Aws.Internal.SigV4;
 using Granit.IoT.Ingestion.Aws.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -34,9 +35,12 @@ public static class IoTIngestionAwsServiceCollectionExtensions
             SnsPayloadSignatureValidator.SubscribeHttpClientName,
             client => client.Timeout = TimeSpan.FromSeconds(10));
 
+        services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<AwsIoTIngestionMetrics>();
         services.TryAddSingleton<ISnsSigningCertificateCache, DefaultSnsSigningCertificateCache>();
         services.AddSingleton<IPayloadSignatureValidator, SnsPayloadSignatureValidator>();
+
+        services.TryAddSingleton<ISigV4RequestValidator, DefaultSigV4RequestValidator>();
 
         return services;
     }

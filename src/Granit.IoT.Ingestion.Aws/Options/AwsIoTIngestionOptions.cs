@@ -21,6 +21,15 @@ public sealed class AwsIoTIngestionOptions
 
     /// <summary>API Gateway HTTP path options (SigV4).</summary>
     public ApiGatewayIngestionOptions ApiGateway { get; set; } = new();
+
+    /// <summary>
+    /// How long to cache a derived SigV4 signing key (HMAC chain over secret
+    /// key + date + region + service). Signing keys change once per calendar
+    /// day per scope, so 24 hours is the natural default — set lower to
+    /// amortize key rotation more aggressively.
+    /// </summary>
+    [Range(1, 48)]
+    public int SigningKeyCacheHours { get; set; } = 24;
 }
 
 /// <summary>
