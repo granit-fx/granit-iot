@@ -118,6 +118,11 @@ public sealed class Device : FullAuditedAggregateRoot, IMultiTenant, IWorkflowSt
         Credential = credential;
     }
 
+    public void UpdateTags(IReadOnlyDictionary<string, string>? tags)
+    {
+        Tags = tags is null ? null : new Dictionary<string, string>(tags);
+    }
+
     public void RecordHeartbeat(DateTimeOffset at)
     {
         LastHeartbeatAt = at;

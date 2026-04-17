@@ -98,11 +98,10 @@ public sealed partial class DeviceHeartbeatTimeoutService(
 
     private async Task<TimeSpan> ResolveTrackerTtlAsync(CancellationToken ct)
     {
-        // Read the cache TTL once per run. The setting is conceptually per-tenant
-        // but the dedup window only needs to be "long enough to suppress a flap";
-        // resolving against the host-context value (or the first-seen tenant
-        // scope) is plenty accurate and saves a per-device async hop on the
-        // alerting hot path.
+        // Read the cache TTL once per run. The setting is conceptually per-tenant,
+        // but the dedup window only needs to be long enough to suppress a flap.
+        // Resolving against the host-context value (or the first-seen tenant scope)
+        // is plenty accurate and saves a per-device async hop on the alerting hot path.
         string? raw = await settings
             .GetOrNullAsync(IoTSettingNames.HeartbeatOfflineNotificationCacheMinutes, ct)
             .ConfigureAwait(false);

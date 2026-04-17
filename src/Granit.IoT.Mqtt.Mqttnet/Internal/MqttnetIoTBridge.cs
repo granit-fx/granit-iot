@@ -249,7 +249,12 @@ internal sealed partial class MqttnetIoTBridge : IIoTMqttBridge, IHostedService,
             delay = TimeSpan.FromSeconds(1);
         }
 
-        _expiryTimer = _clock.CreateTimer(_ => _ = OnCertificateExpiringAsync(),
+        // Fire-and-forget from a synchronous TimerCallback. OnCertificateExpiringAsync
+        // handles its own exceptions (see catch block) so the discarded Task cannot
+        // leak. Kept as an explicit discard rather than async-void to avoid surprising
+        // synchronization-context behavior.
+        _expiryTimer = _clock.CreateTimer(
+            _ => _ = OnCertificateExpiringAsync(),
             state: null, dueTime: delay, period: Timeout.InfiniteTimeSpan);
     }
 

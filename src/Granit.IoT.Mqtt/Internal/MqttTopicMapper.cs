@@ -9,7 +9,7 @@ namespace Granit.IoT.Mqtt.Internal;
 /// the literal <c>devices</c> root — broker-specific deviations should publish to a
 /// topic that respects this layout.
 /// </summary>
-internal sealed partial class MqttTopicMapper
+internal static partial class MqttTopicMapper
 {
     private const string DevicesRoot = "devices";
     private const int SerialSegmentIndex = 1;
