@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Ingestion.Aws</PackageId>
+    <Description>AWS IoT Core ingestion provider for Granit.IoT. Implements the SNS, direct-HTTP, and API-Gateway paths with RSA-SHA256 + SigV4 signature validation, CDN-guarded cert cache, and per-path OpenTelemetry metrics. Plugs into the provider-agnostic POST /iot/ingest/{source} endpoint.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Aws.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.Ingestion.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Caching" />
+  </ItemGroup>
+</Project>
