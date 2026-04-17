@@ -4,7 +4,7 @@ IoT device management, telemetry ingestion, and multi-tenant operations for
 .NET 10 SaaS applications built on the
 [Granit framework](https://github.com/granit-fx/granit-dotnet).
 
-Granit.IoT ships 13 focused NuGet packages plus a meta-bundle. It gives B2B
+Granit.IoT ships 19 focused NuGet packages plus two meta-bundles. It gives B2B
 SaaS teams a production-ready foundation to:
 
 - Manage the full lifecycle of **IoT devices** with DDD, audit trail, and
@@ -36,6 +36,7 @@ SaaS teams a production-ready foundation to:
 | [Notifications bridge](notifications-bridge.md) | Threshold alerts and device-offline alerts via `Granit.Notifications`, per-tenant configuration |
 | [Timeline bridge](timeline-bridge.md) | Device lifecycle events become audit chatter in `Granit.Timeline` — ISO 27001 asset traceability |
 | [MCP bridge](mcp.md) | IoT readers exposed as MCP tools so AI assistants can query the fleet in natural language, tenant-scoped |
+| [AWS IoT Core bridge](aws-bridge.md) | Six-package family that maps the Granit Device to AWS Things, X.509 certificates, Secrets Manager, Device Shadow, IoT Jobs and Fleet Provisioning (JITP) |
 | [Bundle](bundle.md) | `Granit.Bundle.IoT` meta-package — one `AddIoT()` call to enable the full stack |
 
 ## Provider support matrix
@@ -45,6 +46,7 @@ SaaS teams a production-ready foundation to:
 | Scaleway IoT Hub | Available | [Telemetry ingestion → Scaleway](telemetry-ingestion.md#scaleway-iot-hub) |
 | MQTT (Mosquitto, EMQX, HiveMQ, custom broker) | Available | [MQTT](mqtt.md) |
 | AWS IoT Core (SNS path) | Available (RSA-SHA256 + cert cache + replay dedup); SigV4 in flight | [Telemetry ingestion → AWS](telemetry-ingestion.md#aws-iot-core) |
+| AWS IoT Core (control plane: Things, certs, shadow, jobs, JITP) | Available | [AWS IoT Core bridge](aws-bridge.md) |
 | Azure IoT Hub | Not planned | Use the generic MQTT bridge |
 
 ## Per-package READMEs
@@ -68,7 +70,14 @@ and direct dependencies. The documentation here links to them.
 - [`Granit.IoT.Notifications`](../src/Granit.IoT.Notifications/README.md) — notifications bridge
 - [`Granit.IoT.Timeline`](../src/Granit.IoT.Timeline/) — timeline bridge
 - [`Granit.IoT.Mcp`](../src/Granit.IoT.Mcp/README.md) — MCP tools for AI assistants
+- [`Granit.IoT.Aws`](../src/Granit.IoT.Aws/README.md) — AWS bridge — companion `AwsThingBinding`, `IAwsIoTCredentialProvider`
+- [`Granit.IoT.Aws.EntityFrameworkCore`](../src/Granit.IoT.Aws.EntityFrameworkCore/README.md) — AWS bridge persistence
+- [`Granit.IoT.Aws.Provisioning`](../src/Granit.IoT.Aws.Provisioning/README.md) — AWS bridge — idempotent provisioning saga
+- [`Granit.IoT.Aws.Shadow`](../src/Granit.IoT.Aws.Shadow/README.md) — AWS bridge — bidirectional Device Shadow sync
+- [`Granit.IoT.Aws.Jobs`](../src/Granit.IoT.Aws.Jobs/README.md) — AWS bridge — IoT Jobs command dispatcher
+- [`Granit.IoT.Aws.FleetProvisioning`](../src/Granit.IoT.Aws.FleetProvisioning/README.md) — AWS bridge — JITP endpoints + claim cert rotation check
 - [`Granit.Bundle.IoT`](../src/bundles/Granit.Bundle.IoT/README.md) — meta-package
+- [`Granit.Bundle.IoT.Aws`](../src/bundles/Granit.Bundle.IoT.Aws/) — opt-in AWS bridge meta-package
 
 ## Compliance
 
@@ -82,7 +91,8 @@ and direct dependencies. The documentation here links to them.
 Granit.IoT is **pre-release** — actively developed, not yet tagged `v1.0.0`.
 Phase 1 MVP (device management + Scaleway ingestion + notifications/timeline
 bridges) is complete. Phase 2 (MQTT, operational hardening) is complete.
-Phase 3 (AWS, AI/MCP, TimescaleDB) is in design.
+Phase 3 — AWS bridge (Things, certs, shadow, jobs, JITP), AI/MCP, TimescaleDB
+— is shipping in slices.
 
 Track progress on the
 [Epic #1 — IoT & Industry 4.0 Integration Module Family](https://github.com/granit-fx/granit-iot/issues/1).

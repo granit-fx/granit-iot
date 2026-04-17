@@ -4,7 +4,7 @@ Ce fichier répertorie les bibliothèques tierces utilisées par le projet
 **granit-iot** ainsi que leurs licences respectives. Il est mis à jour
 à chaque ajout ou modification de dépendance externe.
 
-Dernière mise à jour : 2026-04-16
+Dernière mise à jour : 2026-04-17
 
 ---
 
@@ -12,7 +12,7 @@ Dernière mise à jour : 2026-04-16
 
 | Licence      | Nombre de packages |
 | ------------ | ------------------ |
-| Apache-2.0   | 27                 |
+| Apache-2.0   | 31                 |
 | MIT          | 6                  |
 | BSD-3-Clause | 2                  |
 | PostgreSQL   | 1                  |
@@ -53,6 +53,10 @@ Packages internes publiés depuis `granit-fx/granit-dotnet`.
 
 | Package                                        | Version | Copyright                                                   |
 | ---------------------------------------------- | ------- | ----------------------------------------------------------- |
+| AWSSDK.Core                                    | 4.0.*   | Copyright (c) Amazon.com, Inc. or its affiliates            |
+| AWSSDK.IoT                                     | 4.0.*   | Copyright (c) Amazon.com, Inc. or its affiliates            |
+| AWSSDK.IotData                                 | 4.0.*   | Copyright (c) Amazon.com, Inc. or its affiliates            |
+| AWSSDK.SecretsManager                          | 4.0.*   | Copyright (c) Amazon.com, Inc. or its affiliates            |
 | FluentValidation                               | 12.*    | Copyright (c) Jeremy Skinner, .NET Foundation 2008-2025     |
 | FluentValidation.DependencyInjectionExtensions | 12.*    | Copyright (c) Jeremy Skinner, .NET Foundation 2008-2025     |
 
