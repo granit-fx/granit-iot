@@ -13,51 +13,33 @@ namespace Granit.IoT.Mqtt.Mqttnet.Internal;
 /// gating happens later in the Wolverine handlers, where the device is already resolved).
 /// </remarks>
 internal sealed class FeatureFlagSnapshot(IFeatureChecker featureChecker, TimeProvider clock, TimeSpan ttl, string featureName)
+    : IDisposable
 {
     private readonly TimeSpan _ttl = ttl;
-    private readonly Lock _gate = new();
+    private readonly SemaphoreSlim _gate = new(1, 1);
     private bool _enabled;
     private DateTimeOffset _expiresAt = DateTimeOffset.MinValue;
-    private Task<bool>? _refreshInFlight;
 
-    public ValueTask<bool> IsEnabledAsync(CancellationToken cancellationToken)
+    public async ValueTask<bool> IsEnabledAsync(CancellationToken cancellationToken)
     {
-        DateTimeOffset now = clock.GetUtcNow();
-        lock (_gate)
-        {
-            if (now < _expiresAt)
-            {
-                return ValueTask.FromResult(_enabled);
-            }
-
-            // Coalesce concurrent refreshes — one in-flight call serves all callers.
-            _refreshInFlight ??= RefreshAsync(cancellationToken);
-            return new ValueTask<bool>(_refreshInFlight);
-        }
-    }
-
-    private async Task<bool> RefreshAsync(CancellationToken cancellationToken)
-    {
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            bool current = await featureChecker.IsEnabledAsync(featureName, cancellationToken).ConfigureAwait(false);
-            lock (_gate)
+            if (clock.GetUtcNow() < _expiresAt)
             {
-                _enabled = current;
-                _expiresAt = clock.GetUtcNow().Add(_ttl);
-                _refreshInFlight = null;
+                return _enabled;
             }
 
+            bool current = await featureChecker.IsEnabledAsync(featureName, cancellationToken).ConfigureAwait(false);
+            _enabled = current;
+            _expiresAt = clock.GetUtcNow().Add(_ttl);
             return current;
         }
-        catch
+        finally
         {
-            lock (_gate)
-            {
-                _refreshInFlight = null;
-            }
-
-            throw;
+            _gate.Release();
         }
     }
+
+    public void Dispose() => _gate.Dispose();
 }
