@@ -183,8 +183,8 @@ public sealed class DeviceEfCoreStoreTests : IDisposable
     [Fact]
     public async Task GetDistinctTenantIdsAsync_ReturnsDistinctTenants()
     {
-        Guid tenantA = Guid.NewGuid();
-        Guid tenantB = Guid.NewGuid();
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
         await _writer.AddAsync(CreateDevice("TENANT-A-1", tenantId: tenantA), TestContext.Current.CancellationToken);
         await _writer.AddAsync(CreateDevice("TENANT-A-2", tenantId: tenantA), TestContext.Current.CancellationToken);
         await _writer.AddAsync(CreateDevice("TENANT-B-1", tenantId: tenantB), TestContext.Current.CancellationToken);
@@ -204,7 +204,7 @@ public sealed class DeviceEfCoreStoreTests : IDisposable
     [Fact]
     public async Task FindStaleAsync_ReturnsActiveDevicesWithStaleHeartbeat()
     {
-        Guid tenant = Guid.NewGuid();
+        var tenant = Guid.NewGuid();
         DateTimeOffset now = DateTimeOffset.UtcNow;
 
         Device stale = CreateDevice("STALE-001", tenantId: tenant);
@@ -227,7 +227,7 @@ public sealed class DeviceEfCoreStoreTests : IDisposable
     [Fact]
     public async Task FindStaleAsync_TreatsNullHeartbeatAsStale()
     {
-        Guid tenant = Guid.NewGuid();
+        var tenant = Guid.NewGuid();
         Device device = CreateDevice("NEVER-SEEN-001", tenantId: tenant);
         device.Activate();
         await _writer.AddAsync(device, TestContext.Current.CancellationToken);
@@ -241,7 +241,7 @@ public sealed class DeviceEfCoreStoreTests : IDisposable
     [Fact]
     public async Task FindStaleAsync_SkipsNonActiveDevices()
     {
-        Guid tenant = Guid.NewGuid();
+        var tenant = Guid.NewGuid();
         Device provisioning = CreateDevice("PROV-001", tenantId: tenant);
         await _writer.AddAsync(provisioning, TestContext.Current.CancellationToken);
 
@@ -258,8 +258,8 @@ public sealed class DeviceEfCoreStoreTests : IDisposable
     [Fact]
     public async Task FindStaleAsync_FiltersByTenantList()
     {
-        Guid tenantA = Guid.NewGuid();
-        Guid tenantB = Guid.NewGuid();
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
 
         Device deviceA = CreateDevice("TENANT-A-STALE", tenantId: tenantA);
         deviceA.Activate();
@@ -279,7 +279,7 @@ public sealed class DeviceEfCoreStoreTests : IDisposable
     [Fact]
     public async Task FindStaleAsync_RespectsBatchSize()
     {
-        Guid tenant = Guid.NewGuid();
+        var tenant = Guid.NewGuid();
         for (int i = 0; i < 5; i++)
         {
             Device d = CreateDevice($"BATCH-{i:D3}", tenantId: tenant);

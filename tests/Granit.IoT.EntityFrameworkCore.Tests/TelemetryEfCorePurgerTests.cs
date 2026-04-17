@@ -26,8 +26,8 @@ public sealed class TelemetryEfCorePurgerTests : IDisposable
     [Fact]
     public async Task PurgeOlderThanAsync_DeletesOnlyRowsBelowCutoffForGivenTenants()
     {
-        Guid tenantA = Guid.NewGuid();
-        Guid tenantB = Guid.NewGuid();
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
         Guid deviceA = await SeedDeviceAsync("DEV-A", tenantA);
         Guid deviceB = await SeedDeviceAsync("DEV-B", tenantB);
 
@@ -54,8 +54,8 @@ public sealed class TelemetryEfCorePurgerTests : IDisposable
     [Fact]
     public async Task PurgeOlderThanAsync_BulkDeletesAcrossMultipleTenantsInOneCall()
     {
-        Guid tenantA = Guid.NewGuid();
-        Guid tenantB = Guid.NewGuid();
+        var tenantA = Guid.NewGuid();
+        var tenantB = Guid.NewGuid();
         Guid deviceA = await SeedDeviceAsync("BULK-A", tenantA);
         Guid deviceB = await SeedDeviceAsync("BULK-B", tenantB);
 
@@ -71,7 +71,7 @@ public sealed class TelemetryEfCorePurgerTests : IDisposable
 
     private async Task<Guid> SeedDeviceAsync(string serial, Guid? tenantId)
     {
-        Device device = Device.Create(
+        var device = Device.Create(
             Guid.NewGuid(),
             tenantId: tenantId,
             DeviceSerialNumber.Create(serial),
