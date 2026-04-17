@@ -30,6 +30,7 @@ public sealed class GranitIoTBackgroundJobsModule : GranitModule
         context.Services.TryAddSingleton<DeviceOfflineTrackerCache>();
         context.Services.TryAddTransient<StaleTelemetryPurgeService>();
         context.Services.TryAddTransient<DeviceHeartbeatTimeoutService>();
+        context.Services.TryAddTransient<TelemetryPartitionMaintenanceService>();
         context.Services.TryAddSingleton<ITelemetryPartitionMaintainer, NoOpTelemetryPartitionMaintainer>();
     }
 }
