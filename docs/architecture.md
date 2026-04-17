@@ -45,7 +45,9 @@ flowchart TB
     N["Granit.IoT.Notifications"]
     T["Granit.IoT.Timeline"]
     MCP["Granit.IoT.Mcp"]
+    AWS["Granit.IoT.Aws<br/>(+ EntityFrameworkCore,<br/>Provisioning, Shadow,<br/>Jobs, FleetProvisioning)"]
     B["Granit.Bundle.IoT"]
+    BAWS["Granit.Bundle.IoT.Aws"]
   end
   subgraph R2["Ring 2 — Ingestion & transport"]
     I["Granit.IoT.Ingestion"]
@@ -106,7 +108,9 @@ opt-in — the core ingestion pipeline works without them.
 | [`Granit.IoT.Notifications`](../src/Granit.IoT.Notifications/README.md) | Bridge to `Granit.Notifications`: threshold alerts, device-offline alerts, per-tenant settings |
 | [`Granit.IoT.Timeline`](../src/Granit.IoT.Timeline/) | Bridge to `Granit.Timeline`: device lifecycle events become audit chatter entries |
 | [`Granit.IoT.Mcp`](../src/Granit.IoT.Mcp/README.md) | Bridge to `Granit.Mcp.Server`: exposes `IDeviceReader` and `ITelemetryReader` as MCP tools for AI assistants, tenant-scoped |
-| [`Granit.Bundle.IoT`](../src/bundles/Granit.Bundle.IoT/README.md) | Meta-package — one `builder.AddIoT()` call enables the full stack (MQTT is opt-in, added separately) |
+| [`Granit.IoT.Aws`](../src/Granit.IoT.Aws/README.md) + 5 sub-packages | Bridge to AWS IoT Core: companion `AwsThingBinding`, idempotent provisioning saga, bidirectional Device Shadow sync, IoT Jobs command dispatcher, JITP endpoints. See the [AWS IoT Core bridge](aws-bridge.md) deep dive. |
+| [`Granit.Bundle.IoT`](../src/bundles/Granit.Bundle.IoT/README.md) | Meta-package — one `builder.AddIoT()` call enables the full cloud-agnostic stack (MQTT is opt-in, added separately) |
+| [`Granit.Bundle.IoT.Aws`](../src/bundles/Granit.Bundle.IoT.Aws/) | Opt-in meta-package for the entire AWS bridge family |
 
 ## Provider support
 
@@ -118,15 +122,9 @@ deduplication, threshold evaluation, and bridges stay the same.
 | Provider | Package | Status | Notes |
 | --- | --- | --- | --- |
 | **Scaleway IoT Hub** | `Granit.IoT.Ingestion.Scaleway` | Available | HMAC-SHA256 signature (`X-Scaleway-Signature`), JSON envelope with Base64 payloads, configurable MQTT topic pattern for serial extraction |
-| **AWS IoT Core** | `Granit.IoT.Ingestion.Aws` | Planned | SNS + direct HTTP + API Gateway variants; AWS SigV4 validation ([#35](https://github.com/granit-fx/granit-iot/issues/35)) |
-| **AWS provisioning / shadow / jobs** | `Granit.IoT.Aws` | Planned | Device provisioning, device shadows, fleet jobs ([#36](https://github.com/granit-fx/granit-iot/issues/36)) |
+| **AWS IoT Core (telemetry)** | `Granit.IoT.Ingestion.Aws` | Available | SNS + Direct + API Gateway paths, RSA-SHA256 / SigV4 signature validation ([#35](https://github.com/granit-fx/granit-iot/issues/35)) |
+| **AWS IoT Core (provisioning / shadow / jobs / JITP)** | `Granit.IoT.Aws` family (6 packages) | Available | Companion `AwsThingBinding`, idempotent provisioning saga, bidirectional Device Shadow sync, IoT Jobs command dispatcher, Fleet Provisioning endpoints ([#36](https://github.com/granit-fx/granit-iot/issues/36) — see [AWS IoT Core bridge](aws-bridge.md)) |
 | **MQTT (any broker)** | `Granit.IoT.Mqtt` + `Granit.IoT.Mqtt.Mqttnet` | Available | Works with Mosquitto, EMQX, HiveMQ, Scaleway IoT Hub in MQTT mode, or self-hosted brokers |
-
-> [!NOTE]
-> AWS packages are tracked in the Phase 1 MVP AWS issue ([#35](https://github.com/granit-fx/granit-iot/issues/35))
-> and Phase 2 full AWS device integration ([#36](https://github.com/granit-fx/granit-iot/issues/36)).
-> Until they ship, an AWS SaaS can still use Granit.IoT by forwarding IoT Core
-> messages to the generic MQTT bridge.
 
 ## Key design decisions
 

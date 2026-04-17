@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Aws.Shadow</PackageId>
+    <Description>Bidirectional AWS IoT Device Shadow synchronisation for the Granit IoT bridge. Pushes device lifecycle changes to the reported shadow document and polls the desired/reported delta to surface cloud-issued state changes as DeviceDesiredStateChangedEvent.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Aws.Shadow.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Aws\Granit.IoT.Aws.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" />
+    <PackageReference Include="AWSSDK.IotData" />
+    <PackageReference Include="Granit" />
+  </ItemGroup>
+</Project>

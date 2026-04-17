@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Aws.Provisioning</PackageId>
+    <Description>AWS-SDK-backed provisioning of AWS IoT Things, X.509 certificates, and Secrets Manager entries for the Granit IoT bridge. Hosts the idempotent saga handler that reacts to Device lifecycle events plus the Secrets Manager-backed credential loader. First package in the Granit.IoT.Aws family to depend on the AWS SDK.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Aws.Provisioning.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Aws\Granit.IoT.Aws.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" />
+    <PackageReference Include="AWSSDK.IoT" />
+    <PackageReference Include="AWSSDK.SecretsManager" />
+    <PackageReference Include="Granit" />
+  </ItemGroup>
+</Project>

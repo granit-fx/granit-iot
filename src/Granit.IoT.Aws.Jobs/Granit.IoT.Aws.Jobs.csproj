@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Aws.Jobs</PackageId>
+    <Description>AWS IoT Jobs command dispatcher for the Granit IoT bridge. Translates Granit device commands into AWS IoT Jobs (single device, ThingGroup, or DynamicThingGroup targeting), tracks execution via a polling service, and surfaces completion as DeviceCommandCompletedEvent / DeviceCommandFailedEvent. Also reacts to DeviceDesiredStateChangedEvent (PR #5) to dispatch one job per delta key.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Aws.Jobs.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Aws\Granit.IoT.Aws.csproj" />
+    <ProjectReference Include="..\Granit.IoT.Aws.Shadow\Granit.IoT.Aws.Shadow.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" />
+    <PackageReference Include="AWSSDK.IoT" />
+    <PackageReference Include="Granit" />
+  </ItemGroup>
+</Project>

@@ -1,3 +1,4 @@
+using Granit.IoT.Aws.Extensions;
 using Granit.Modularity;
 
 namespace Granit.IoT.Aws;
@@ -16,7 +17,6 @@ public sealed class GranitIoTAwsModule : GranitModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
-        // No services registered yet: reader/writer arrive with the EF Core
-        // bridge package, the provisioning service with PR #4.
+        context.Services.AddGranitIoTAwsCredentials();
     }
 }

@@ -43,7 +43,7 @@ and persists the new status + ARN inside the same transaction as the Wolverine
 inbox acknowledgement. A replay therefore resumes exactly where it stopped —
 never creating duplicate AWS resources.
 
-## What this package contains today (PR #1, story #44)
+## What this package contains today
 
 - Companion aggregate `AwsThingBinding` (`FullAuditedAggregateRoot`,
   `IMultiTenant`)
@@ -52,7 +52,37 @@ never creating duplicate AWS resources.
 - CQRS abstractions `IAwsThingBindingReader` / `IAwsThingBindingWriter`
 - Domain events `AwsThingProvisionedEvent`, `AwsThingDecommissionedEvent`
 - Module wiring `GranitIoTAwsModule`
+- Credential pipeline: `IAwsIoTCredentialProvider` plus an IAM-role default
+  provider and a rotating provider that polls an `IAwsIoTCredentialLoader`
+  (no AWS SDK reference here — the loader implementation backed by Secrets
+  Manager ships in a follow-up package)
 
-The persistence (`AwsBindingDbContext`), the bridge handlers, the actual
-provisioning service and the credential provider land in subsequent PRs
-(stories #45 → #51).
+The bridge handlers and the actual provisioning service land in PR #4 /
+story #47.
+
+## Credential pipeline (PR #3, story #45)
+
+`AddGranitIoTAwsCredentials()` (called by the module) wires both modes:
+
+- `FleetCredentialSecretArn = null` → `IamRoleAwsIoTCredentialProvider`
+  is registered. `AccessKeyId` / `SecretAccessKey` / `SessionToken` all
+  return `null` so the AWS SDK default credential chain (instance role,
+  ECS task role, env vars) authenticates outbound traffic.
+  `IsReady` is always `true`.
+- `FleetCredentialSecretArn = "arn:aws:secretsmanager:..."` →
+  `RotatingAwsIoTCredentialProvider` is registered as a singleton plus an
+  `IHostedService`. It polls `IAwsIoTCredentialLoader.LoadAsync` on
+  `RotationCheckIntervalMinutes` (default 5) and exposes the latest values
+  through volatile fields. A failed refresh keeps the previous credentials
+  in place (stale-ok); `IsReady` flips to `true` only after the first
+  successful fetch.
+
+**Health gate**: every call site that talks to AWS must short-circuit when
+`IsReady == false`. The minimal API endpoints shipped by later PRs do this
+with `Results.Problem(statusCode: 503)`; the host's `HealthChecks` should
+publish a matching readiness probe.
+
+The actual `IAwsIoTCredentialLoader` implementation that calls
+`IAmazonSecretsManager.GetSecretValueAsync` ships in PR #4 (story #47), at
+which point the AWS SDK reference enters the dependency graph for the first
+time.
