@@ -32,19 +32,19 @@ internal sealed class PostgresTelemetryEfCoreReader(
     {
         ArgumentException.ThrowIfNullOrEmpty(metricName);
 
+        string aggregateExpr = aggregation switch
+        {
+            TelemetryAggregation.Avg => "AVG((\"Metrics\" ->> @metric)::double precision)",
+            TelemetryAggregation.Min => "MIN((\"Metrics\" ->> @metric)::double precision)",
+            TelemetryAggregation.Max => "MAX((\"Metrics\" ->> @metric)::double precision)",
+            TelemetryAggregation.Count => "COUNT(*)::double precision",
+            _ => throw new ArgumentOutOfRangeException(nameof(aggregation), aggregation, null),
+        };
+
         return await ReadAsync(async db =>
         {
             string table = QualifiedTelemetryTable();
             string tenantPredicate = BuildTenantPredicate(out Guid? tenantFilterValue);
-
-            string aggregateExpr = aggregation switch
-            {
-                TelemetryAggregation.Avg => "AVG((\"Metrics\" ->> @metric)::double precision)",
-                TelemetryAggregation.Min => "MIN((\"Metrics\" ->> @metric)::double precision)",
-                TelemetryAggregation.Max => "MAX((\"Metrics\" ->> @metric)::double precision)",
-                TelemetryAggregation.Count => "COUNT(*)::double precision",
-                _ => throw new ArgumentOutOfRangeException(nameof(aggregation), aggregation, null),
-            };
 
             string sql =
                 $"SELECT {aggregateExpr} AS \"Value\", COUNT(*) AS \"Count\" " +
