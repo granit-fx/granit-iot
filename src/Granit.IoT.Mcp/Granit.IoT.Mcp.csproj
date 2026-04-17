@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Mcp</PackageId>
+    <Description>Exposes Granit.IoT device and telemetry readers as MCP (Model Context Protocol) tools so AI assistants (Claude, Copilot) can query the IoT fleet in natural language. Thin projection over IDeviceReader and ITelemetryReader — no business logic, fully tenant-scoped.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Mcp.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Mcp" />
+    <PackageReference Include="Granit.Mcp.Server" />
+  </ItemGroup>
+</Project>

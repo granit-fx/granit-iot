@@ -13,6 +13,7 @@
     <Project Path="src/Granit.IoT.Wolverine/Granit.IoT.Wolverine.csproj" />
     <Project Path="src/Granit.IoT.BackgroundJobs/Granit.IoT.BackgroundJobs.csproj" />
     <Project Path="src/Granit.IoT.Timeline/Granit.IoT.Timeline.csproj" />
+    <Project Path="src/Granit.IoT.Mcp/Granit.IoT.Mcp.csproj" />
   </Folder>
   <Folder Name="/src/bundles/">
     <Project Path="src/bundles/Granit.Bundle.IoT/Granit.Bundle.IoT.csproj" />
@@ -28,5 +29,6 @@
     <Project Path="tests/Granit.IoT.EntityFrameworkCore.Postgres.Tests/Granit.IoT.EntityFrameworkCore.Postgres.Tests.csproj" />
     <Project Path="tests/Granit.IoT.BackgroundJobs.Tests/Granit.IoT.BackgroundJobs.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Timeline.Tests/Granit.IoT.Timeline.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.Mcp.Tests/Granit.IoT.Mcp.Tests.csproj" />
   </Folder>
 </Solution>

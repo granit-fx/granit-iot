@@ -2,7 +2,7 @@
 
 Granit.IoT is a modular IoT device management and telemetry ingestion platform
 built on the [Granit framework](https://github.com/granit-fx/granit-dotnet) for
-.NET 10. It ships 13 focused NuGet packages plus a meta-bundle, organized in
+.NET 10. It ships 14 focused NuGet packages plus a meta-bundle, organized in
 three cohesion rings, and gives B2B SaaS teams a production-ready foundation
 to manage IoT devices, ingest sensor data, trigger alerts, and stay compliant
 with GDPR and ISO 27001 — without rebuilding the plumbing.
@@ -44,6 +44,7 @@ flowchart TB
   subgraph R3["Ring 3 — Cross-cutting bridges"]
     N["Granit.IoT.Notifications"]
     T["Granit.IoT.Timeline"]
+    MCP["Granit.IoT.Mcp"]
     B["Granit.Bundle.IoT"]
   end
   subgraph R2["Ring 2 — Ingestion & transport"]
@@ -100,6 +101,7 @@ opt-in — the core ingestion pipeline works without them.
 | --- | --- |
 | [`Granit.IoT.Notifications`](../src/Granit.IoT.Notifications/README.md) | Bridge to `Granit.Notifications`: threshold alerts, device-offline alerts, per-tenant settings |
 | [`Granit.IoT.Timeline`](../src/Granit.IoT.Timeline/) | Bridge to `Granit.Timeline`: device lifecycle events become audit chatter entries |
+| [`Granit.IoT.Mcp`](../src/Granit.IoT.Mcp/README.md) | Bridge to `Granit.Mcp.Server`: exposes `IDeviceReader` and `ITelemetryReader` as MCP tools for AI assistants, tenant-scoped |
 | [`Granit.Bundle.IoT`](../src/bundles/Granit.Bundle.IoT/README.md) | Meta-package — one `builder.AddIoT()` call enables the full stack (MQTT is opt-in, added separately) |
 
 ## Provider support

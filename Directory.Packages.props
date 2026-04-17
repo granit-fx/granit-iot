@@ -70,6 +70,8 @@
     <!-- AI / MCP -->
     <PackageVersion Include="Granit.AI" Version="0.1.0-dev.*" />
     <PackageVersion Include="Granit.AI.EntityFrameworkCore" Version="0.1.0-dev.*" />
+    <PackageVersion Include="Granit.Mcp" Version="0.1.0-dev.*" />
+    <PackageVersion Include="Granit.Mcp.Server" Version="0.1.0-dev.*" />
     <!-- Workflow (device state transitions) -->
     <PackageVersion Include="Granit.Workflow" Version="0.1.0-dev.*" />
     <PackageVersion Include="Granit.Workflow.EntityFrameworkCore" Version="0.1.0-dev.*" />
@@ -129,8 +131,8 @@
 
   <!-- Model Context Protocol -->
   <ItemGroup Label="MCP">
-    <PackageVersion Include="ModelContextProtocol" Version="1.1.*" />
-    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="1.1.*" />
+    <PackageVersion Include="ModelContextProtocol" Version="1.2.*" />
+    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="1.2.*" />
   </ItemGroup>
 
   <ItemGroup Label="Observability">
