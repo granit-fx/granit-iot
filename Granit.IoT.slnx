@@ -7,6 +7,7 @@
     <Project Path="src/Granit.IoT.Ingestion/Granit.IoT.Ingestion.csproj" />
     <Project Path="src/Granit.IoT.Ingestion.Endpoints/Granit.IoT.Ingestion.Endpoints.csproj" />
     <Project Path="src/Granit.IoT.Ingestion.Scaleway/Granit.IoT.Ingestion.Scaleway.csproj" />
+    <Project Path="src/Granit.IoT.Ingestion.Aws/Granit.IoT.Ingestion.Aws.csproj" />
     <Project Path="src/Granit.IoT.Mqtt/Granit.IoT.Mqtt.csproj" />
     <Project Path="src/Granit.IoT.Mqtt.Mqttnet/Granit.IoT.Mqtt.Mqttnet.csproj" />
     <Project Path="src/Granit.IoT.Notifications/Granit.IoT.Notifications.csproj" />
@@ -32,5 +33,6 @@
     <Project Path="tests/Granit.IoT.Timeline.Tests/Granit.IoT.Timeline.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Mcp.Tests/Granit.IoT.Mcp.Tests.csproj" />
     <Project Path="tests/Granit.IoT.EntityFrameworkCore.Timescale.Tests/Granit.IoT.EntityFrameworkCore.Timescale.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.Ingestion.Aws.Tests/Granit.IoT.Ingestion.Aws.Tests.csproj" />
   </Folder>
 </Solution>

@@ -2,7 +2,7 @@
 
 Granit.IoT is a modular IoT device management and telemetry ingestion platform
 built on the [Granit framework](https://github.com/granit-fx/granit-dotnet) for
-.NET 10. It ships 15 focused NuGet packages plus a meta-bundle, organized in
+.NET 10. It ships 16 focused NuGet packages plus a meta-bundle, organized in
 three cohesion rings, and gives B2B SaaS teams a production-ready foundation
 to manage IoT devices, ingest sensor data, trigger alerts, and stay compliant
 with GDPR and ISO 27001 — without rebuilding the plumbing.
@@ -51,6 +51,7 @@ flowchart TB
     I["Granit.IoT.Ingestion"]
     IE["Granit.IoT.Ingestion.Endpoints"]
     IS["Granit.IoT.Ingestion.Scaleway"]
+    IA["Granit.IoT.Ingestion.Aws"]
     W["Granit.IoT.Wolverine"]
     M["Granit.IoT.Mqtt"]
     MM["Granit.IoT.Mqtt.Mqttnet"]
@@ -90,6 +91,7 @@ Everything that turns raw provider payloads into normalized domain events.
 | [`Granit.IoT.Ingestion`](../src/Granit.IoT.Ingestion/README.md) | Provider-agnostic pipeline: signature validation → parsing → deduplication (Redis) → outbox dispatch |
 | [`Granit.IoT.Ingestion.Endpoints`](../src/Granit.IoT.Ingestion.Endpoints/README.md) | `POST /iot/ingest/{source}` returning `202 Accepted` |
 | [`Granit.IoT.Ingestion.Scaleway`](../src/Granit.IoT.Ingestion.Scaleway/README.md) | Scaleway IoT Hub provider — HMAC-SHA256 + JSON envelope parser |
+| [`Granit.IoT.Ingestion.Aws`](../src/Granit.IoT.Ingestion.Aws/README.md) | AWS IoT Core provider — RSA-SHA256 SNS path with CDN-guarded cert cache (SigV4 + parsers in flight) |
 | [`Granit.IoT.Wolverine`](../src/Granit.IoT.Wolverine/README.md) | Wolverine handlers for telemetry persistence and threshold evaluation |
 | [`Granit.IoT.Mqtt`](../src/Granit.IoT.Mqtt/README.md) | MQTT broker abstractions (connection, topic subscription, QoS) |
 | [`Granit.IoT.Mqtt.Mqttnet`](../src/Granit.IoT.Mqtt.Mqttnet/README.md) | MQTTnet implementation — connect to any MQTT 3.1.1 / 5.0 broker |

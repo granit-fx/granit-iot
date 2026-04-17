@@ -153,20 +153,24 @@ the `Metrics` dictionary in `ParsedTelemetryBatch`.
 Options bind via `IOptionsMonitor<ScalewayIoTOptions>` — rotating the shared
 secret is a configuration reload, no restart required.
 
-## AWS IoT Core (planned)
+## AWS IoT Core
 
-AWS IoT Core support is split across two roadmap packages:
+AWS IoT Core support is split across two packages:
 
-- [`Granit.IoT.Ingestion.Aws`](https://github.com/granit-fx/granit-iot/issues/35)
-  — SNS subscription, direct HTTP, and API Gateway variants; AWS SigV4
-  signature validation
-- [`Granit.IoT.Aws`](https://github.com/granit-fx/granit-iot/issues/36)
-  — device provisioning, device shadows, fleet jobs
+- [`Granit.IoT.Ingestion.Aws`](../src/Granit.IoT.Ingestion.Aws/README.md) —
+  SNS subscription, direct HTTP, and API Gateway variants. **First slice
+  shipping**: the SNS path (RSA-SHA256 + CDN-guarded cert cache + replay
+  dedup + topic-ARN allow-list). SigV4 (Direct, API Gateway) and the message
+  parsers land in follow-up commits.
+- [`Granit.IoT.Aws`](https://github.com/granit-fx/granit-iot/issues/36) —
+  device provisioning, device shadows, fleet jobs (planned, not started).
 
-Until the AWS packages ship, an AWS-native SaaS can still use Granit.IoT by
-**forwarding IoT Core messages through a generic MQTT bridge** — see
-[MQTT](mqtt.md). The domain model, persistence, and notification bridges are
-provider-agnostic; only the ingestion edge changes.
+Until the SigV4 paths and parsers land, AWS IoT Core SNS deliveries can be
+verified end-to-end via the SNS validator but the parser stage is still a
+follow-up. AWS-native teams that want full ingestion today can forward IoT
+Core messages through a generic MQTT bridge — see [MQTT](mqtt.md). The
+domain model, persistence, and notification bridges are provider-agnostic;
+only the ingestion edge changes.
 
 ## The ingestion endpoint — `POST /iot/ingest/{source}`
 

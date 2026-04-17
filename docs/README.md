@@ -44,7 +44,7 @@ SaaS teams a production-ready foundation to:
 | --- | --- | --- |
 | Scaleway IoT Hub | Available | [Telemetry ingestion → Scaleway](telemetry-ingestion.md#scaleway-iot-hub) |
 | MQTT (Mosquitto, EMQX, HiveMQ, custom broker) | Available | [MQTT](mqtt.md) |
-| AWS IoT Core | Planned — [#35](https://github.com/granit-fx/granit-iot/issues/35), [#36](https://github.com/granit-fx/granit-iot/issues/36) | [Telemetry ingestion → AWS roadmap](telemetry-ingestion.md#aws-iot-core-planned) |
+| AWS IoT Core (SNS path) | Available (RSA-SHA256 + cert cache + replay dedup); SigV4 in flight | [Telemetry ingestion → AWS](telemetry-ingestion.md#aws-iot-core) |
 | Azure IoT Hub | Not planned | Use the generic MQTT bridge |
 
 ## Per-package READMEs
@@ -61,6 +61,7 @@ and direct dependencies. The documentation here links to them.
 - [`Granit.IoT.Ingestion`](../src/Granit.IoT.Ingestion/README.md) — ingestion pipeline
 - [`Granit.IoT.Ingestion.Endpoints`](../src/Granit.IoT.Ingestion.Endpoints/README.md) — webhook endpoint
 - [`Granit.IoT.Ingestion.Scaleway`](../src/Granit.IoT.Ingestion.Scaleway/README.md) — Scaleway provider
+- [`Granit.IoT.Ingestion.Aws`](../src/Granit.IoT.Ingestion.Aws/README.md) — AWS IoT Core provider (SNS first slice)
 - [`Granit.IoT.Wolverine`](../src/Granit.IoT.Wolverine/README.md) — Wolverine handlers
 - [`Granit.IoT.Mqtt`](../src/Granit.IoT.Mqtt/README.md) — MQTT abstractions
 - [`Granit.IoT.Mqtt.Mqttnet`](../src/Granit.IoT.Mqtt.Mqttnet/README.md) — MQTTnet implementation
