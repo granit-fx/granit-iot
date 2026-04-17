@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\src\Granit.IoT.EntityFrameworkCore.Timescale\Granit.IoT.EntityFrameworkCore.Timescale.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Ingestion.Aws\Granit.IoT.Ingestion.Aws.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Aws\Granit.IoT.Aws.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Aws.EntityFrameworkCore\Granit.IoT.Aws.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

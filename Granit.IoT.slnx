@@ -17,6 +17,7 @@
     <Project Path="src/Granit.IoT.Mcp/Granit.IoT.Mcp.csproj" />
     <Project Path="src/Granit.IoT.EntityFrameworkCore.Timescale/Granit.IoT.EntityFrameworkCore.Timescale.csproj" />
     <Project Path="src/Granit.IoT.Aws/Granit.IoT.Aws.csproj" />
+    <Project Path="src/Granit.IoT.Aws.EntityFrameworkCore/Granit.IoT.Aws.EntityFrameworkCore.csproj" />
   </Folder>
   <Folder Name="/src/bundles/">
     <Project Path="src/bundles/Granit.Bundle.IoT/Granit.Bundle.IoT.csproj" />
@@ -36,5 +37,6 @@
     <Project Path="tests/Granit.IoT.EntityFrameworkCore.Timescale.Tests/Granit.IoT.EntityFrameworkCore.Timescale.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Ingestion.Aws.Tests/Granit.IoT.Ingestion.Aws.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Aws.Tests/Granit.IoT.Aws.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.Aws.EntityFrameworkCore.Tests/Granit.IoT.Aws.EntityFrameworkCore.Tests.csproj" />
   </Folder>
 </Solution>

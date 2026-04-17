@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Aws.EntityFrameworkCore</PackageId>
+    <Description>EF Core persistence layer for the Granit.IoT.Aws bridge — isolated AwsBindingDbContext (schema iotaws_) holding the AwsThingBinding companion of the cloud-agnostic Device.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Aws.EntityFrameworkCore.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Aws\Granit.IoT.Aws.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit.MultiTenancy" />
+    <PackageReference Include="Granit.Persistence" />
+    <PackageReference Include="Granit.Persistence.EntityFrameworkCore" />
+  </ItemGroup>
+</Project>
