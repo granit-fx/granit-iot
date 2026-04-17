@@ -11,6 +11,8 @@
     <Project Path="src/Granit.IoT.Mqtt.Mqttnet/Granit.IoT.Mqtt.Mqttnet.csproj" />
     <Project Path="src/Granit.IoT.Notifications/Granit.IoT.Notifications.csproj" />
     <Project Path="src/Granit.IoT.Wolverine/Granit.IoT.Wolverine.csproj" />
+    <Project Path="src/Granit.IoT.BackgroundJobs/Granit.IoT.BackgroundJobs.csproj" />
+    <Project Path="src/Granit.IoT.Timeline/Granit.IoT.Timeline.csproj" />
   </Folder>
   <Folder Name="/src/bundles/">
     <Project Path="src/bundles/Granit.Bundle.IoT/Granit.Bundle.IoT.csproj" />
@@ -23,5 +25,7 @@
     <Project Path="tests/Granit.IoT.Mqtt.Tests/Granit.IoT.Mqtt.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Mqtt.Mqttnet.Tests/Granit.IoT.Mqtt.Mqttnet.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Notifications.Tests/Granit.IoT.Notifications.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.BackgroundJobs.Tests/Granit.IoT.BackgroundJobs.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.Timeline.Tests/Granit.IoT.Timeline.Tests.csproj" />
   </Folder>
 </Solution>

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Timeline</PackageId>
+    <Description>Bridge package: writes Granit.Timeline entries for device lifecycle events (provisioned, activated, suspended, reactivated, decommissioned).</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Timeline.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Timeline" />
+  </ItemGroup>
+</Project>
