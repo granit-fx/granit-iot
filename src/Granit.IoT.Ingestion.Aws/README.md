@@ -11,10 +11,12 @@ new pipeline — just the validators, parsers, and the cert cache that AWS
 specifically requires.
 
 > [!NOTE]
-> This first slice ships the **SNS path** only. SigV4 (Direct, API Gateway)
-> and the message parsers land in follow-up commits — the package is designed
-> as a vertical slice per HTTP path so each can be reviewed and shipped
-> independently.
+> The SNS path validator + the SigV4 core both ship. The wrappers that plug
+> SigV4 into the `IPayloadSignatureValidator` contract for the Direct and
+> API Gateway paths land alongside the dedicated endpoints in a follow-up,
+> because SigV4 needs HTTP method + path + query string — those are not
+> available from `body + headers` alone and have to come from the endpoint
+> layer.
 
 ## What this slice ships
 
@@ -32,9 +34,16 @@ specifically requires.
   `SourceName = "awsiotsns"`) — RSA-SHA256 verification, replay dedup,
   topic-ARN allow-list, optional auto-confirmation of `SubscriptionConfirmation`
 - `AwsIoTIngestionMetrics` — OpenTelemetry counters
-  (`granit.iot.aws.ingestion.sns.*`)
+  (`granit.iot.aws.ingestion.sns.*`, `granit.iot.aws.ingestion.sigv4.*`)
 - `SnsSigningCertFetchException` — surfaced as `503 Service Unavailable` by
   the endpoint layer
+- `ISigV4RequestValidator` + `DefaultSigV4RequestValidator` — reusable AWS
+  Signature V4 verifier matching the canonical
+  [AWS SigV4 test suite](https://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html)
+  (5-minute clock skew, scope-date check, `FixedTimeEquals` comparison)
+- `ISigV4SigningKeyProvider` — host-supplied secret-key resolver, typically
+  reading from `Granit.Vault`. Implementations must return `null` for
+  unknown access keys so the validator can fail closed.
 
 ## Two layers of cert security
 
@@ -110,6 +119,7 @@ app.MapGranitIoTIngestionEndpoints();
 | `Sns:AutoConfirmSubscription` | `false` | Fire-and-forget GET to `SubscribeURL` on `SubscriptionConfirmation` |
 | `Sns:CertCacheHours` | `24` | Per-cert TTL in `IFusionCache` |
 | `Sns:DeduplicationWindowMinutes` | `5` | Replay window per `MessageId` (matches SNS at-least-once SLA) |
+| `SigningKeyCacheHours` | `24` | Per-scope SigV4 signing-key TTL — keys change once per calendar day so 24h is the natural ceiling |
 
 > [!IMPORTANT]
 > `Direct:ApiKey` MUST NOT be set in `appsettings.{Production}.json`. The
@@ -117,6 +127,36 @@ app.MapGranitIoTIngestionEndpoints();
 > `Development` environment. Load it from `Granit.Vault` at runtime and bind
 > via `IOptionsMonitor<AwsIoTIngestionOptions>` — secret rotations apply
 > without restart.
+
+## SigV4 — how it fits
+
+```mermaid
+flowchart LR
+  REQ["Direct / API Gateway request"]
+  HDR["Authorization: AWS4-HMAC-SHA256<br/>x-amz-date"]
+  SKEW{"Within 5-min<br/>clock skew?"}
+  SCOPE{"scope.date == x-amz-date.day?"}
+  PROV["ISigV4SigningKeyProvider<br/>(Granit.Vault)"]
+  DERIVE["SigV4SigningKey.Derive()<br/>(HMAC chain, cached per scope)"]
+  COMPUTE["Build canonical request<br/>+ string-to-sign<br/>+ HMAC-SHA256"]
+  CMP{"FixedTimeEquals<br/>(computed, received)?"}
+  OK["Accept"]
+  REJECT["Reject"]
+
+  REQ --> HDR --> SKEW
+  SKEW -->|no| REJECT
+  SKEW -->|yes| SCOPE
+  SCOPE -->|no| REJECT
+  SCOPE -->|yes| PROV --> DERIVE --> COMPUTE --> CMP
+  CMP -->|match| OK
+  CMP -->|mismatch| REJECT
+```
+
+The validator is verified against the AWS public
+[`get-vanilla` test vector](https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html) —
+it reproduces the canonical request, string-to-sign, and signature
+(`5fa00fa31553b73ebf1942676e86291e8372ff2a2260956d9b8aae1d763fbf31`) byte for
+byte. Any drift from the AWS spec breaks that test before merge.
 
 ## Anti-patterns to avoid
 
