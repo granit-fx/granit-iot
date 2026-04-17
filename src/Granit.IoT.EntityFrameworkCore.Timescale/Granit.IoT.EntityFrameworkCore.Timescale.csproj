@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.EntityFrameworkCore.Timescale</PackageId>
+    <Description>Opt-in TimescaleDB backend for Granit.IoT telemetry. Converts iot_telemetry_points to a hypertable, installs hourly and daily continuous aggregates, and replaces the telemetry reader so aggregate queries use time_bucket() and pre-materialized rollups. Requires the timescaledb PostgreSQL extension.</Description>
+    <IsPackable>true</IsPackable>
+    <!-- EF1001: this assembly reaches into Internal namespaces of sibling packages to reuse IoTDbContext + the Postgres JSONB aggregation path. -->
+    <NoWarn>$(NoWarn);EF1001</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.EntityFrameworkCore.Timescale.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.Tests.Integration" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.EntityFrameworkCore\Granit.IoT.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\Granit.IoT.EntityFrameworkCore.Postgres\Granit.IoT.EntityFrameworkCore.Postgres.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+</Project>

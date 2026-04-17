@@ -15,14 +15,14 @@ namespace Granit.IoT.EntityFrameworkCore.Postgres.Internal;
 /// cannot translate indexer/<c>ContainsKey</c> on a JSONB-mapped
 /// <see cref="IReadOnlyDictionary{TKey,TValue}"/>.
 /// </summary>
-internal sealed class PostgresTelemetryEfCoreReader(
+internal class PostgresTelemetryEfCoreReader(
     IDbContextFactory<IoTDbContext> contextFactory,
     ICurrentTenant? currentTenant = null)
     : TelemetryEfCoreReader(contextFactory, currentTenant)
 {
     private readonly ICurrentTenant? _currentTenant = currentTenant;
 
-    public override async Task<TelemetryAggregate?> GetAggregateAsync(
+    public override Task<TelemetryAggregate?> GetAggregateAsync(
         Guid deviceId,
         string metricName,
         DateTimeOffset rangeStart,
@@ -41,19 +41,46 @@ internal sealed class PostgresTelemetryEfCoreReader(
             _ => throw new ArgumentOutOfRangeException(nameof(aggregation), aggregation, null),
         };
 
-        return await ReadAsync(async db =>
-        {
-            string table = QualifiedTelemetryTable();
-            string tenantPredicate = BuildTenantPredicate(out Guid? tenantFilterValue);
-
-            string sql =
+        return ExecuteAggregateSqlAsync(
+            tenantPredicate =>
                 $"SELECT {aggregateExpr} AS \"Value\", COUNT(*) AS \"Count\" " +
-                $"FROM {table} " +
+                $"FROM {QualifiedTelemetryTable()} " +
                 "WHERE \"DeviceId\" = @deviceId " +
                 "  AND \"RecordedAt\" >= @rangeStart " +
                 "  AND \"RecordedAt\" <= @rangeEnd " +
                 "  AND \"Metrics\" ? @metric" +
-                tenantPredicate;
+                tenantPredicate,
+            deviceId,
+            metricName,
+            rangeStart,
+            rangeEnd,
+            cancellationToken);
+    }
+
+    /// <summary>
+    /// Executes a raw aggregate SQL statement with the standard
+    /// <c>@deviceId / @metric / @rangeStart / @rangeEnd</c> parameters and an
+    /// optional <c>@tenantId</c> appended via
+    /// <see cref="BuildTenantPredicate"/>. <paramref name="sqlBuilder"/>
+    /// receives the tenant-predicate suffix (empty or
+    /// <c>" AND \"TenantId\" = @tenantId"</c>) and returns the final SQL,
+    /// which must project two columns: <c>Value</c> (nullable double) and
+    /// <c>Count</c> (long).
+    /// </summary>
+    protected Task<TelemetryAggregate?> ExecuteAggregateSqlAsync(
+        Func<string, string> sqlBuilder,
+        Guid deviceId,
+        string metricName,
+        DateTimeOffset rangeStart,
+        DateTimeOffset rangeEnd,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(sqlBuilder);
+
+        return ReadAsync(async db =>
+        {
+            string tenantPredicate = BuildTenantPredicate(out Guid? tenantFilterValue);
+            string sql = sqlBuilder(tenantPredicate);
 
             List<NpgsqlParameter> parameters =
             [
@@ -71,16 +98,13 @@ internal sealed class PostgresTelemetryEfCoreReader(
                 .SqlQueryRaw<AggregateRow>(sql, [.. parameters])
                 .SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
-            if (row is null || row.Count == 0)
-            {
-                return null;
-            }
-
-            return new TelemetryAggregate(row.Value ?? 0d, row.Count, rangeStart, rangeEnd);
-        }, cancellationToken).ConfigureAwait(false);
+            return row is null || row.Count == 0
+                ? null
+                : new TelemetryAggregate(row.Value ?? 0d, row.Count, rangeStart, rangeEnd);
+        }, cancellationToken);
     }
 
-    private static string QualifiedTelemetryTable()
+    protected static string QualifiedTelemetryTable()
     {
         string tableName = GranitIoTDbProperties.DbTablePrefix + "telemetry_points";
         string? schema = GranitIoTDbProperties.DbSchema;
@@ -89,7 +113,7 @@ internal sealed class PostgresTelemetryEfCoreReader(
             : $"\"{schema}\".\"{tableName}\"";
     }
 
-    private string BuildTenantPredicate(out Guid? tenantFilterValue)
+    protected string BuildTenantPredicate(out Guid? tenantFilterValue)
     {
         // Raw SQL bypasses EF Core query filters. Replicate the multi-tenant filter
         // behavior: when a tenant is active, constrain to its rows. When running in
