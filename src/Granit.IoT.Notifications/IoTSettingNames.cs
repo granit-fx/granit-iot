@@ -20,4 +20,16 @@ public static class IoTSettingNames
     /// <c>IoT:Threshold:{metricName}</c> (e.g. <c>IoT:Threshold:temperature</c>).
     /// </summary>
     public const string ThresholdPrefix = "IoT:Threshold:";
+
+    /// <summary>
+    /// Minutes since a device's last heartbeat after which it is considered offline.
+    /// Set to <c>0</c> to disable the heartbeat check for the tenant.
+    /// </summary>
+    public const string HeartbeatTimeoutMinutes = "IoT:HeartbeatTimeoutMinutes";
+
+    /// <summary>
+    /// How long the heartbeat job remembers a device that has already been
+    /// reported offline, preventing alert spam on flaky links (LoRa / NB-IoT).
+    /// </summary>
+    public const string HeartbeatOfflineNotificationCacheMinutes = "IoT:HeartbeatOfflineNotificationCacheMinutes";
 }

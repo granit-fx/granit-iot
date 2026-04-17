@@ -21,6 +21,8 @@ public sealed class IoTMetrics
     private readonly Counter<long> _ingestionUnknownDevice;
     private readonly Counter<long> _ingestionThresholdExceeded;
     private readonly Counter<long> _alertsThrottled;
+    private readonly Counter<long> _telemetryPurged;
+    private readonly Counter<long> _partitionCreated;
 
     public IoTMetrics(IMeterFactory meterFactory)
     {
@@ -53,6 +55,14 @@ public sealed class IoTMetrics
         _alertsThrottled = meter.CreateCounter<long>(
             "granit.iot.alerts.throttled",
             description: "Number of threshold-alert notifications suppressed because an alert for the same (device, metric) was published within the throttle window.");
+
+        _telemetryPurged = meter.CreateCounter<long>(
+            "granit.iot.background.telemetry_purged",
+            description: "Number of telemetry rows deleted by the stale-telemetry purge job, tagged by tenant.");
+
+        _partitionCreated = meter.CreateCounter<long>(
+            "granit.iot.background.partition_created",
+            description: "Number of future monthly partitions created by the partition maintenance job.");
     }
 
     public void RecordTelemetryIngested(string? tenantId, string source) =>
@@ -101,5 +111,17 @@ public sealed class IoTMetrics
         {
             { TagTenantId, tenantId ?? DefaultTenant },
             { "metric_name", metricName },
+        });
+
+    public void RecordTelemetryPurged(string? tenantId, long count) =>
+        _telemetryPurged.Add(count, new TagList
+        {
+            { TagTenantId, tenantId ?? DefaultTenant },
+        });
+
+    public void RecordPartitionCreated(string partitionName) =>
+        _partitionCreated.Add(1, new TagList
+        {
+            { "partition_name", partitionName },
         });
 }

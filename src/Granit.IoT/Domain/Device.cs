@@ -65,6 +65,7 @@ public sealed class Device : FullAuditedAggregateRoot, IMultiTenant, IWorkflowSt
     {
         EnsureStatus(DeviceStatus.Provisioning, nameof(Activate));
         Status = DeviceStatus.Active;
+        AddDomainEvent(new DeviceActivatedEvent(Id, SerialNumber, TenantId));
     }
 
     public void Suspend(string reason)
@@ -82,6 +83,7 @@ public sealed class Device : FullAuditedAggregateRoot, IMultiTenant, IWorkflowSt
         EnsureStatus(DeviceStatus.Suspended, nameof(Reactivate));
         Status = DeviceStatus.Active;
         SuspensionReason = null;
+        AddDomainEvent(new DeviceReactivatedEvent(Id, SerialNumber, TenantId));
     }
 
     public void Decommission()

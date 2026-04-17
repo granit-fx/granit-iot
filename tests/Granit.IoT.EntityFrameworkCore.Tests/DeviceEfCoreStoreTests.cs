@@ -178,12 +178,127 @@ public sealed class DeviceEfCoreStoreTests : IDisposable
         result.ShouldBeNull();
     }
 
+    // ===== GetDistinctTenantIdsAsync =====
+
+    [Fact]
+    public async Task GetDistinctTenantIdsAsync_ReturnsDistinctTenants()
+    {
+        Guid tenantA = Guid.NewGuid();
+        Guid tenantB = Guid.NewGuid();
+        await _writer.AddAsync(CreateDevice("TENANT-A-1", tenantId: tenantA), TestContext.Current.CancellationToken);
+        await _writer.AddAsync(CreateDevice("TENANT-A-2", tenantId: tenantA), TestContext.Current.CancellationToken);
+        await _writer.AddAsync(CreateDevice("TENANT-B-1", tenantId: tenantB), TestContext.Current.CancellationToken);
+        await _writer.AddAsync(CreateDevice("GLOBAL-1", tenantId: null), TestContext.Current.CancellationToken);
+
+        IReadOnlyList<Guid?> tenants =
+            await _reader.GetDistinctTenantIdsAsync(TestContext.Current.CancellationToken);
+
+        tenants.ShouldContain(tenantA);
+        tenants.ShouldContain(tenantB);
+        tenants.ShouldContain((Guid?)null);
+        tenants.Count.ShouldBe(3);
+    }
+
+    // ===== FindStaleAsync =====
+
+    [Fact]
+    public async Task FindStaleAsync_ReturnsActiveDevicesWithStaleHeartbeat()
+    {
+        Guid tenant = Guid.NewGuid();
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+
+        Device stale = CreateDevice("STALE-001", tenantId: tenant);
+        stale.Activate();
+        stale.RecordHeartbeat(now.AddMinutes(-30));
+        await _writer.AddAsync(stale, TestContext.Current.CancellationToken);
+
+        Device fresh = CreateDevice("FRESH-001", tenantId: tenant);
+        fresh.Activate();
+        fresh.RecordHeartbeat(now.AddMinutes(-1));
+        await _writer.AddAsync(fresh, TestContext.Current.CancellationToken);
+
+        IReadOnlyList<Device> result = await _reader.FindStaleAsync(
+            [tenant], now.AddMinutes(-15), batchSize: 100, TestContext.Current.CancellationToken);
+
+        result.Count.ShouldBe(1);
+        result[0].SerialNumber.Value.ShouldBe("STALE-001");
+    }
+
+    [Fact]
+    public async Task FindStaleAsync_TreatsNullHeartbeatAsStale()
+    {
+        Guid tenant = Guid.NewGuid();
+        Device device = CreateDevice("NEVER-SEEN-001", tenantId: tenant);
+        device.Activate();
+        await _writer.AddAsync(device, TestContext.Current.CancellationToken);
+
+        IReadOnlyList<Device> result = await _reader.FindStaleAsync(
+            [tenant], DateTimeOffset.UtcNow, batchSize: 100, TestContext.Current.CancellationToken);
+
+        result.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task FindStaleAsync_SkipsNonActiveDevices()
+    {
+        Guid tenant = Guid.NewGuid();
+        Device provisioning = CreateDevice("PROV-001", tenantId: tenant);
+        await _writer.AddAsync(provisioning, TestContext.Current.CancellationToken);
+
+        Device decommissioned = CreateDevice("DECOM-001", tenantId: tenant);
+        decommissioned.Decommission();
+        await _writer.AddAsync(decommissioned, TestContext.Current.CancellationToken);
+
+        IReadOnlyList<Device> result = await _reader.FindStaleAsync(
+            [tenant], DateTimeOffset.UtcNow, batchSize: 100, TestContext.Current.CancellationToken);
+
+        result.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task FindStaleAsync_FiltersByTenantList()
+    {
+        Guid tenantA = Guid.NewGuid();
+        Guid tenantB = Guid.NewGuid();
+
+        Device deviceA = CreateDevice("TENANT-A-STALE", tenantId: tenantA);
+        deviceA.Activate();
+        await _writer.AddAsync(deviceA, TestContext.Current.CancellationToken);
+
+        Device deviceB = CreateDevice("TENANT-B-STALE", tenantId: tenantB);
+        deviceB.Activate();
+        await _writer.AddAsync(deviceB, TestContext.Current.CancellationToken);
+
+        IReadOnlyList<Device> result = await _reader.FindStaleAsync(
+            [tenantA], DateTimeOffset.UtcNow, batchSize: 100, TestContext.Current.CancellationToken);
+
+        result.Count.ShouldBe(1);
+        result[0].SerialNumber.Value.ShouldBe("TENANT-A-STALE");
+    }
+
+    [Fact]
+    public async Task FindStaleAsync_RespectsBatchSize()
+    {
+        Guid tenant = Guid.NewGuid();
+        for (int i = 0; i < 5; i++)
+        {
+            Device d = CreateDevice($"BATCH-{i:D3}", tenantId: tenant);
+            d.Activate();
+            await _writer.AddAsync(d, TestContext.Current.CancellationToken);
+        }
+
+        IReadOnlyList<Device> result = await _reader.FindStaleAsync(
+            [tenant], DateTimeOffset.UtcNow, batchSize: 2, TestContext.Current.CancellationToken);
+
+        result.Count.ShouldBe(2);
+    }
+
     // ===== HELPERS =====
 
-    private static Device CreateDevice(string serialNumber = "SN-TEST-001") =>
+    private static Device CreateDevice(string serialNumber = "SN-TEST-001", Guid? tenantId = null) =>
         Device.Create(
             Guid.NewGuid(),
-            tenantId: null,
+            tenantId: tenantId,
             DeviceSerialNumber.Create(serialNumber),
             HardwareModel.Create("TestSensor-V1"),
             FirmwareVersion.Create("1.0.0"),

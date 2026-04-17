@@ -49,6 +49,16 @@ public sealed class DeviceTests
     }
 
     [Fact]
+    public void Activate_RaisesDeviceActivatedEvent()
+    {
+        Device device = CreateProvisioningDevice();
+
+        device.Activate();
+
+        device.DomainEvents.ShouldContain(e => e is DeviceActivatedEvent);
+    }
+
+    [Fact]
     public void Activate_FromActive_Throws()
     {
         Device device = CreateProvisioningDevice();
@@ -99,6 +109,18 @@ public sealed class DeviceTests
 
         device.Status.ShouldBe(DeviceStatus.Active);
         device.SuspensionReason.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Reactivate_RaisesDeviceReactivatedEvent()
+    {
+        Device device = CreateProvisioningDevice();
+        device.Activate();
+        device.Suspend("Maintenance");
+
+        device.Reactivate();
+
+        device.DomainEvents.ShouldContain(e => e is DeviceReactivatedEvent);
     }
 
     [Fact]

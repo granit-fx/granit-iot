@@ -13,21 +13,25 @@ public sealed class IoTSettingDefinitionProviderTests
     {
         List<SettingDefinition> captured = CaptureDefinitions();
 
-        captured.Count.ShouldBe(4);
+        captured.Count.ShouldBe(6);
         captured.Select(d => d.Name).ShouldBe(
             [
                 IoTSettingNames.TelemetryRetentionDays,
                 IoTSettingNames.IngestRateLimit,
                 IoTSettingNames.NotificationThrottleMinutes,
+                IoTSettingNames.HeartbeatTimeoutMinutes,
+                IoTSettingNames.HeartbeatOfflineNotificationCacheMinutes,
                 "IoT:Threshold",
             ],
             ignoreOrder: true);
     }
 
     [Theory]
-    [InlineData("IoT:TelemetryRetentionDays", "90")]
+    [InlineData("IoT:TelemetryRetentionDays", "365")]
     [InlineData("IoT:IngestRateLimit", "1000")]
     [InlineData("IoT:NotificationThrottleMinutes", "15")]
+    [InlineData("IoT:HeartbeatTimeoutMinutes", "15")]
+    [InlineData("IoT:HeartbeatOfflineNotificationCacheMinutes", "60")]
     public void Define_KeySetting_HasExpectedDefault(string name, string expectedDefault)
     {
         SettingDefinition definition = CaptureDefinitions().Single(d => d.Name == name);

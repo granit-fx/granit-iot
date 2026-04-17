@@ -55,4 +55,32 @@ internal sealed class DeviceEfCoreReader(
         var sn = DeviceSerialNumber.Create(serialNumber);
         return await AnyAsync(d => d.SerialNumber == sn, cancellationToken).ConfigureAwait(false);
     }
+
+    public Task<IReadOnlyList<Guid?>> GetDistinctTenantIdsAsync(CancellationToken cancellationToken = default) =>
+        ReadAsync<IReadOnlyList<Guid?>>(async db =>
+            await db.Devices
+                .IgnoreQueryFilters()
+                .Select(d => d.TenantId)
+                .Distinct()
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false),
+            cancellationToken);
+
+    public Task<IReadOnlyList<Device>> FindStaleAsync(
+        IReadOnlyCollection<Guid?> tenantIds,
+        DateTimeOffset lastHeartbeatBefore,
+        int batchSize,
+        CancellationToken cancellationToken = default) =>
+        ReadAsync<IReadOnlyList<Device>>(async db =>
+            await db.Devices
+                .IgnoreQueryFilters()
+                .Where(d => tenantIds.Contains(d.TenantId))
+                .Where(d => d.Status == DeviceStatus.Active)
+                .Where(d => d.LastHeartbeatAt == null || d.LastHeartbeatAt < lastHeartbeatBefore)
+                .OrderBy(d => d.Id)
+                .Take(batchSize)
+                .AsNoTracking()
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false),
+            cancellationToken);
 }

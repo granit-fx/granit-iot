@@ -20,6 +20,7 @@ public static class IoTEntityFrameworkCoreServiceCollectionExtensions
         services.TryAddScoped<IDeviceLookup, DeviceLookupEfCore>();
         services.TryAddScoped<ITelemetryReader, TelemetryEfCoreReader>();
         services.TryAddScoped<ITelemetryWriter, TelemetryEfCoreWriter>();
+        services.TryAddScoped<ITelemetryPurger, TelemetryEfCorePurger>();
 
         return services;
     }
