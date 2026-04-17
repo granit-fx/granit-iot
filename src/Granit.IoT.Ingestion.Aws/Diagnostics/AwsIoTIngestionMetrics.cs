@@ -32,6 +32,15 @@ public sealed class AwsIoTIngestionMetrics : IDisposable
         SnsCertFetches = _meter.CreateCounter<long>(
             "granit.iot.aws.ingestion.sns.cert_fetches",
             description: "HTTP fetches of the SNS signing certificate (cache misses).");
+        SigV4Accepted = _meter.CreateCounter<long>(
+            "granit.iot.aws.ingestion.sigv4.accepted",
+            description: "SigV4 inbound requests accepted (signature valid, within clock skew).");
+        SigV4Rejected = _meter.CreateCounter<long>(
+            "granit.iot.aws.ingestion.sigv4.rejected",
+            description: "SigV4 inbound requests rejected (bad signature, clock skew, unknown AKID).");
+        SigV4KeyDerivations = _meter.CreateCounter<long>(
+            "granit.iot.aws.ingestion.sigv4.key_derivations",
+            description: "SigV4 signing-key derivations (cache misses).");
     }
 
     /// <summary>Counter: SNS messages accepted.</summary>
@@ -48,6 +57,15 @@ public sealed class AwsIoTIngestionMetrics : IDisposable
 
     /// <summary>Counter: SNS cert fetches (cache misses).</summary>
     public Counter<long> SnsCertFetches { get; }
+
+    /// <summary>Counter: SigV4 requests accepted.</summary>
+    public Counter<long> SigV4Accepted { get; }
+
+    /// <summary>Counter: SigV4 requests rejected.</summary>
+    public Counter<long> SigV4Rejected { get; }
+
+    /// <summary>Counter: SigV4 signing-key derivations (cache misses).</summary>
+    public Counter<long> SigV4KeyDerivations { get; }
 
     public void Dispose() => _meter.Dispose();
 }
