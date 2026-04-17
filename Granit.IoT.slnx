@@ -21,6 +21,7 @@
     <Project Path="src/Granit.IoT.Aws.Provisioning/Granit.IoT.Aws.Provisioning.csproj" />
     <Project Path="src/Granit.IoT.Aws.Shadow/Granit.IoT.Aws.Shadow.csproj" />
     <Project Path="src/Granit.IoT.Aws.Jobs/Granit.IoT.Aws.Jobs.csproj" />
+    <Project Path="src/Granit.IoT.Aws.FleetProvisioning/Granit.IoT.Aws.FleetProvisioning.csproj" />
   </Folder>
   <Folder Name="/src/bundles/">
     <Project Path="src/bundles/Granit.Bundle.IoT/Granit.Bundle.IoT.csproj" />
@@ -44,5 +45,6 @@
     <Project Path="tests/Granit.IoT.Aws.Provisioning.Tests/Granit.IoT.Aws.Provisioning.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Aws.Shadow.Tests/Granit.IoT.Aws.Shadow.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Aws.Jobs.Tests/Granit.IoT.Aws.Jobs.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.Aws.FleetProvisioning.Tests/Granit.IoT.Aws.FleetProvisioning.Tests.csproj" />
   </Folder>
 </Solution>

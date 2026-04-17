@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Aws.FleetProvisioning</PackageId>
+    <Description>AWS IoT Fleet Provisioning (JITP) endpoints for the Granit IoT bridge. Atomically materialises Device + AwsThingBinding when AWS-provisioned devices register through a customer's pre/post-provisioning Lambda. Bypasses the standard saga (binding lands in Active straight away). Includes ClaimCertificateRotationCheckService that surfaces expiring claim certificates as ClaimCertificateExpiringEvent.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Aws.FleetProvisioning.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
+    <ProjectReference Include="..\Granit.IoT.Aws\Granit.IoT.Aws.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Http.ApiDocumentation" />
+    <PackageReference Include="Granit.Validation" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+  </ItemGroup>
+</Project>
