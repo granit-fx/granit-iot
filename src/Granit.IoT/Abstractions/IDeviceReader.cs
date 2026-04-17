@@ -23,4 +23,24 @@ public interface IDeviceReader
 
     /// <summary>Returns whether a device with the given serial number exists in the current tenant.</summary>
     Task<bool> ExistsAsync(string serialNumber, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns the distinct set of <c>TenantId</c> values across all devices,
+    /// bypassing the multi-tenancy query filter. Designed for cross-tenant
+    /// background jobs that need to enumerate active tenants.
+    /// </summary>
+    Task<IReadOnlyList<Guid?>> GetDistinctTenantIdsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns Active devices belonging to any of <paramref name="tenantIds"/> whose
+    /// <see cref="Device.LastHeartbeatAt"/> is null or older than
+    /// <paramref name="lastHeartbeatBefore"/>. Bypasses the multi-tenancy query
+    /// filter and bounds results by <paramref name="batchSize"/>. Designed for
+    /// the heartbeat job's bucketed query — never one query per tenant.
+    /// </summary>
+    Task<IReadOnlyList<Device>> FindStaleAsync(
+        IReadOnlyCollection<Guid?> tenantIds,
+        DateTimeOffset lastHeartbeatBefore,
+        int batchSize,
+        CancellationToken cancellationToken = default);
 }

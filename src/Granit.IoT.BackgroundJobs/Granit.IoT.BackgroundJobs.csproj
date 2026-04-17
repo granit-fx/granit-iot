@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.BackgroundJobs</PackageId>
+    <Description>Recurring background jobs for the Granit.IoT module: stale telemetry purge (GDPR retention), device heartbeat timeout detection, and PostgreSQL partition maintenance.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.BackgroundJobs.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
+    <ProjectReference Include="..\Granit.IoT.Notifications\Granit.IoT.Notifications.csproj" />
+    <ProjectReference Include="..\Granit.IoT.Wolverine\Granit.IoT.Wolverine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.BackgroundJobs" />
+    <PackageReference Include="Granit.MultiTenancy" />
+    <PackageReference Include="Granit.Settings" />
+  </ItemGroup>
+</Project>

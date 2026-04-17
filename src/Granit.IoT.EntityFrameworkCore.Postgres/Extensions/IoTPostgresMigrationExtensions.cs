@@ -1,3 +1,4 @@
+using Granit.IoT.EntityFrameworkCore.Postgres.Internal;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Granit.IoT.EntityFrameworkCore.Postgres.Extensions;
@@ -55,6 +56,42 @@ public static class IoTPostgresMigrationExtensions
     {
         migrationBuilder.CreateTelemetryBrinIndex(schema);
         migrationBuilder.CreateTelemetryGinIndex(schema);
+        return migrationBuilder;
+    }
+
+    /// <summary>
+    /// Converts <c>iot_telemetry_points</c> to a RANGE-partitioned table by
+    /// <c>RecordedAt</c>. Idempotent: the DDL inspects <c>pg_partitioned_table</c>
+    /// and skips if already partitioned. Designed for empty tables — converting
+    /// a populated table requires a separate data-copy migration which is out of
+    /// scope here.
+    /// </summary>
+    /// <remarks>
+    /// Pair this call with one or more <see cref="CreateTelemetryPartition"/>
+    /// invocations to seed the first months. Future months are created at
+    /// runtime by <c>TelemetryPartitionMaintenanceJob</c>.
+    /// </remarks>
+    public static MigrationBuilder EnableTelemetryPartitioning(
+        this MigrationBuilder migrationBuilder,
+        string? schema = null)
+    {
+        migrationBuilder.Sql(TelemetryPartitionSqlBuilder.EnablePartitioningSql(schema));
+        return migrationBuilder;
+    }
+
+    /// <summary>
+    /// Creates a single monthly partition <c>iot_telemetry_points_{year}_{month:D2}</c>
+    /// covering <c>[firstOfMonth, firstOfNextMonth)</c>, attached to the parent.
+    /// Uses <c>CREATE TABLE IF NOT EXISTS</c> + <c>IF NOT EXISTS</c> on the
+    /// partition-local BRIN(RecordedAt) and GIN(Metrics) indexes for idempotency.
+    /// </summary>
+    public static MigrationBuilder CreateTelemetryPartition(
+        this MigrationBuilder migrationBuilder,
+        int year,
+        int month,
+        string? schema = null)
+    {
+        migrationBuilder.Sql(TelemetryPartitionSqlBuilder.CreatePartitionSql(year, month, schema));
         return migrationBuilder;
     }
 }

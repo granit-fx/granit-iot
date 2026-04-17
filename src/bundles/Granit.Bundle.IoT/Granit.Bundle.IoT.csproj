@@ -15,6 +15,8 @@
     <ProjectReference Include="..\..\Granit.IoT.Ingestion.Scaleway\Granit.IoT.Ingestion.Scaleway.csproj" />
     <ProjectReference Include="..\..\Granit.IoT.Wolverine\Granit.IoT.Wolverine.csproj" />
     <ProjectReference Include="..\..\Granit.IoT.Notifications\Granit.IoT.Notifications.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.BackgroundJobs\Granit.IoT.BackgroundJobs.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Timeline\Granit.IoT.Timeline.csproj" />
   </ItemGroup>
 
   <ItemGroup>

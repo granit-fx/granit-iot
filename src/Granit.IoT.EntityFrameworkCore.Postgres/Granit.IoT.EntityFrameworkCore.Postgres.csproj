@@ -3,10 +3,15 @@
     <PackageId>Granit.IoT.EntityFrameworkCore.Postgres</PackageId>
     <Description>PostgreSQL-specific optimizations for Granit.IoT — BRIN/GIN indexes, jsonb column mapping, and time-series partitioning.</Description>
     <IsPackable>true</IsPackable>
+    <!-- EF1001: this assembly deliberately reaches into Granit.IoT.EntityFrameworkCore.Internal to access IoTDbContext for partition maintenance. -->
+    <NoWarn>$(NoWarn);EF1001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Granit.IoT.Tests.Integration" />
+    <InternalsVisibleTo Include="Granit.IoT.BackgroundJobs" />
+    <InternalsVisibleTo Include="Granit.IoT.BackgroundJobs.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.EntityFrameworkCore.Postgres.Tests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 

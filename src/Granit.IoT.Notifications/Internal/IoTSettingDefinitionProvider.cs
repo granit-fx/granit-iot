@@ -24,10 +24,28 @@ internal sealed class IoTSettingDefinitionProvider : ISettingDefinitionProvider
 
         context.Add(new SettingDefinition(IoTSettingNames.TelemetryRetentionDays)
         {
-            DefaultValue = "90",
+            DefaultValue = "365",
             IsVisibleToClients = true,
             DisplayName = "Telemetry retention (days)",
             Description = "Number of days a telemetry point is kept before the background purge job removes it.",
+            Providers = { TenantProvider, GlobalProvider },
+        });
+
+        context.Add(new SettingDefinition(IoTSettingNames.HeartbeatTimeoutMinutes)
+        {
+            DefaultValue = "15",
+            IsVisibleToClients = true,
+            DisplayName = "Heartbeat timeout (minutes)",
+            Description = "Minutes since a device's last heartbeat after which it is considered offline. Set to 0 to disable the check for the tenant.",
+            Providers = { TenantProvider, GlobalProvider },
+        });
+
+        context.Add(new SettingDefinition(IoTSettingNames.HeartbeatOfflineNotificationCacheMinutes)
+        {
+            DefaultValue = "60",
+            IsVisibleToClients = true,
+            DisplayName = "Heartbeat offline notification cache (minutes)",
+            Description = "How long the heartbeat job remembers a device that has already been reported offline. Prevents alert spam when links flap (LoRa / NB-IoT).",
             Providers = { TenantProvider, GlobalProvider },
         });
 
