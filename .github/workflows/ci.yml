@@ -5,6 +5,9 @@
 #
 # Required secrets:
 #   GRANIT_PACKAGES_TOKEN — GitHub Packages token for the Granit.* NuGet feed
+#
+# Optional secrets:
+#   SONAR_TOKEN           — SonarCloud authentication token
 # =============================================================================
 
 name: CI
@@ -120,7 +123,7 @@ jobs:
           -c $CONFIGURATION --no-build
           --logger "trx;LogFilePath=TestResults/results.trx"
           --collect:"XPlat Code Coverage"
-          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover,cobertura
 
       - name: Upload test results
         if: always()
@@ -128,6 +131,14 @@ jobs:
         with:
           name: test-results
           path: "**/TestResults/"
+          retention-days: 7
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: coverage
+          path: "**/coverage.opencover.xml"
           retention-days: 7
 
   # ---------------------------------------------------------------------------
@@ -187,6 +198,90 @@ jobs:
           name: vulnerability-report
           path: vulnerability-report.txt
           retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # ANALYSIS — SonarCloud (coverage + code smells, non-blocking)
+  # Skipped on forks (no access to SONAR_TOKEN).
+  # ---------------------------------------------------------------------------
+  sonarcloud:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    continue-on-error: true
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Setup Java (SonarScanner)
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: NuGet cache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: SonarCloud cache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: ~/.sonar/cache
+          key: sonar-${{ runner.os }}
+
+      - name: Authenticate GitHub Packages
+        env:
+          GRANIT_PACKAGES_TOKEN: ${{ secrets.GRANIT_PACKAGES_TOKEN }}
+        run: >
+          dotnet nuget update source granit-registry
+          --username granit-fx
+          --password "$GRANIT_PACKAGES_TOKEN"
+          --store-password-in-clear-text
+          --configfile nuget.config
+
+      - name: Download coverage
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: coverage
+
+      - name: Install SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: SonarCloud scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dotnet sonarscanner begin \
+            /k:"granit-fx_granit-iot" \
+            /o:"granit-fx" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+            /d:sonar.exclusions=".nuget/**,docs/**,scripts/**" \
+            /d:sonar.coverage.exclusions="**/tests/**,**/bundles/**,**/GranitIoT*Module.cs" \
+            /d:sonar.issue.ignore.multicriteria="e1,e2,e3" \
+            /d:sonar.issue.ignore.multicriteria.e1.ruleKey="csharpsquid:S6608" \
+            /d:sonar.issue.ignore.multicriteria.e1.resourceKey="**/*" \
+            /d:sonar.issue.ignore.multicriteria.e2.ruleKey="external_roslyn:IDE0007" \
+            /d:sonar.issue.ignore.multicriteria.e2.resourceKey="**/*" \
+            /d:sonar.issue.ignore.multicriteria.e3.ruleKey="csharpsquid:S2699" \
+            /d:sonar.issue.ignore.multicriteria.e3.resourceKey="**/tests/**" \
+            /d:sonar.qualitygate.wait="true"
+          dotnet build Granit.IoT.slnx -c $CONFIGURATION
+          dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
 
   # ---------------------------------------------------------------------------
   # SBOM — CycloneDX JSON, uploaded as artifact and attached to releases
