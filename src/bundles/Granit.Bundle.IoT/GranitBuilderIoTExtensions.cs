@@ -5,6 +5,7 @@ using Granit.IoT.EntityFrameworkCore;
 using Granit.IoT.Ingestion;
 using Granit.IoT.Ingestion.Endpoints;
 using Granit.IoT.Ingestion.Scaleway;
+using Granit.IoT.Mcp;
 using Granit.IoT.Notifications;
 using Granit.IoT.Timeline;
 using Granit.IoT.Wolverine;
@@ -39,6 +40,7 @@ public static class GranitBuilderIoTExtensions
         builder.AddModule<GranitIoTNotificationsModule>();
         builder.AddModule<GranitIoTBackgroundJobsModule>();
         builder.AddModule<GranitIoTTimelineModule>();
+        builder.AddModule<GranitIoTMcpModule>();
         return builder;
     }
 }

@@ -34,6 +34,7 @@ SaaS teams a production-ready foundation to:
 | [Operational hardening](operational-hardening.md) | `StaleTelemetryPurgeJob`, `DeviceHeartbeatTimeoutJob`, `TelemetryPartitionMaintenanceJob` — the jobs that keep the system healthy at scale |
 | [Notifications bridge](notifications-bridge.md) | Threshold alerts and device-offline alerts via `Granit.Notifications`, per-tenant configuration |
 | [Timeline bridge](timeline-bridge.md) | Device lifecycle events become audit chatter in `Granit.Timeline` — ISO 27001 asset traceability |
+| [MCP bridge](mcp.md) | IoT readers exposed as MCP tools so AI assistants can query the fleet in natural language, tenant-scoped |
 | [Bundle](bundle.md) | `Granit.Bundle.IoT` meta-package — one `AddIoT()` call to enable the full stack |
 
 ## Provider support matrix
@@ -63,6 +64,7 @@ and direct dependencies. The documentation here links to them.
 - [`Granit.IoT.Mqtt.Mqttnet`](../src/Granit.IoT.Mqtt.Mqttnet/README.md) — MQTTnet implementation
 - [`Granit.IoT.Notifications`](../src/Granit.IoT.Notifications/README.md) — notifications bridge
 - [`Granit.IoT.Timeline`](../src/Granit.IoT.Timeline/) — timeline bridge
+- [`Granit.IoT.Mcp`](../src/Granit.IoT.Mcp/README.md) — MCP tools for AI assistants
 - [`Granit.Bundle.IoT`](../src/bundles/Granit.Bundle.IoT/README.md) — meta-package
 
 ## Compliance

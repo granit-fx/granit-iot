@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\src\Granit.IoT.Wolverine\Granit.IoT.Wolverine.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.BackgroundJobs\Granit.IoT.BackgroundJobs.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Timeline\Granit.IoT.Timeline.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Mcp\Granit.IoT.Mcp.csproj" />
   </ItemGroup>
 
   <ItemGroup>
