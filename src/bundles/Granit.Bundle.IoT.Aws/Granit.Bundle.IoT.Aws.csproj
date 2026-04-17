@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.Bundle.IoT.Aws</PackageId>
+    <Description>Opt-in meta-package grouping the full Granit.IoT.Aws bridge family: companion AwsThingBinding, EF Core persistence, credential pipeline, idempotent provisioning saga, bidirectional Device Shadow sync, IoT Jobs command dispatcher and Fleet Provisioning (JITP) endpoints. Add this to a Granit IoT host that runs against AWS IoT Core. Sister bundles (Azure, Scaleway) ship separately.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Granit.IoT.Aws\Granit.IoT.Aws.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Aws.EntityFrameworkCore\Granit.IoT.Aws.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Aws.Provisioning\Granit.IoT.Aws.Provisioning.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Aws.Shadow\Granit.IoT.Aws.Shadow.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Aws.Jobs\Granit.IoT.Aws.Jobs.csproj" />
+    <ProjectReference Include="..\..\Granit.IoT.Aws.FleetProvisioning\Granit.IoT.Aws.FleetProvisioning.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+  </ItemGroup>
+</Project>

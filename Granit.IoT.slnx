@@ -25,6 +25,7 @@
   </Folder>
   <Folder Name="/src/bundles/">
     <Project Path="src/bundles/Granit.Bundle.IoT/Granit.Bundle.IoT.csproj" />
+    <Project Path="src/bundles/Granit.Bundle.IoT.Aws/Granit.Bundle.IoT.Aws.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Granit.IoT.Tests/Granit.IoT.Tests.csproj" />

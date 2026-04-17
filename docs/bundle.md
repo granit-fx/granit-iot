@@ -48,7 +48,14 @@ flowchart LR
 
 - `Granit.IoT.Mqtt` + `Granit.IoT.Mqtt.Mqttnet` — add only if you need
   a non-Scaleway MQTT broker. See [MQTT](mqtt.md).
-- Phase 3 packages (`AI.Mcp`, `TimescaleDB`, `AWS`) — not yet released.
+- `Granit.IoT.Aws` family (6 packages) — add when targeting AWS IoT
+  Core for Things, certificates, Device Shadow, IoT Jobs, or Fleet
+  Provisioning. The matching opt-in meta-package
+  [`Granit.Bundle.IoT.Aws`](../src/bundles/Granit.Bundle.IoT.Aws/) pulls
+  the entire AWS bridge in one reference. See the
+  [AWS IoT Core bridge](aws-bridge.md) page.
+- Phase 3 cross-cutting packages — `Granit.IoT.AI.Mcp`,
+  `Granit.IoT.EntityFrameworkCore.Timescale` — opt-in per use case.
 
 ## Installation
 
