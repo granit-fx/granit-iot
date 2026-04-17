@@ -1,0 +1,22 @@
+using Granit.Modularity;
+
+namespace Granit.IoT.Aws;
+
+/// <summary>
+/// Bridge module: maps cloud-agnostic Granit IoT devices to AWS IoT Core
+/// resources via the <c>AwsThingBinding</c> companion aggregate. The actual
+/// provisioning workflow (Thing/certificate/secret creation, shadow sync,
+/// jobs dispatch, JITP endpoints) lands in companion packages
+/// (<c>Granit.IoT.Aws.EntityFrameworkCore</c>, <c>Granit.IoT.Aws.Shadow</c>,
+/// <c>Granit.IoT.Aws.Jobs</c>, <c>Granit.IoT.Aws.FleetProvisioning</c>).
+/// </summary>
+[DependsOn(typeof(GranitIoTModule))]
+public sealed class GranitIoTAwsModule : GranitModule
+{
+    public override void ConfigureServices(ServiceConfigurationContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        // No services registered yet: reader/writer arrive with the EF Core
+        // bridge package, the provisioning service with PR #4.
+    }
+}
