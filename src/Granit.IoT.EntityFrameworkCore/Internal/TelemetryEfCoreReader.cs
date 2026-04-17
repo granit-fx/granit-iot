@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Granit.IoT.EntityFrameworkCore.Internal;
 
-internal sealed class TelemetryEfCoreReader(
+internal class TelemetryEfCoreReader(
     IDbContextFactory<IoTDbContext> contextFactory,
     ICurrentTenant? currentTenant = null)
     : EfStoreBase<TelemetryPoint, IoTDbContext>(contextFactory, currentTenant), ITelemetryReader
@@ -41,7 +41,7 @@ internal sealed class TelemetryEfCoreReader(
             cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<TelemetryAggregate?> GetAggregateAsync(
+    public virtual async Task<TelemetryAggregate?> GetAggregateAsync(
         Guid deviceId,
         string metricName,
         DateTimeOffset rangeStart,
@@ -49,33 +49,28 @@ internal sealed class TelemetryEfCoreReader(
         TelemetryAggregation aggregation,
         CancellationToken cancellationToken = default)
     {
+        // Provider-agnostic path: only Count is portable. Metric-level Avg/Min/Max
+        // requires JSONB extraction pushed to the database — implemented by the
+        // PostgreSQL override (PostgresTelemetryEfCoreReader). Raising here prevents
+        // silent data corruption when a non-PostgreSQL provider is used.
+        if (aggregation is not TelemetryAggregation.Count)
+        {
+            throw new NotSupportedException(
+                $"Aggregation '{aggregation}' on metric '{metricName}' requires a provider-specific reader. " +
+                "Register Granit.IoT.EntityFrameworkCore.Postgres (AddGranitIoTPostgres) to enable Avg/Min/Max.");
+        }
+
         return await ReadAsync(async db =>
         {
-            // Push aggregation to the database.
-            // For provider-agnostic LINQ, we filter telemetry points then compute in SQL.
-            // JSONB-specific optimizations (e.g. metrics->>'key') are applied at the
-            // PostgreSQL provider level via raw SQL if needed.
-            IQueryable<TelemetryPoint> points = Query(db)
+            long count = await Query(db)
                 .Where(tp => tp.DeviceId == deviceId
                     && tp.RecordedAt >= rangeStart
-                    && tp.RecordedAt <= rangeEnd);
+                    && tp.RecordedAt <= rangeEnd)
+                .LongCountAsync(cancellationToken).ConfigureAwait(false);
 
-            long count = await points.LongCountAsync(cancellationToken).ConfigureAwait(false);
-            if (count == 0)
-            {
-                return null;
-            }
-
-            // For now, aggregate over the RecordedAt dimension.
-            // Metric-specific aggregation (extracting values from the JSONB Metrics dict)
-            // requires provider-specific SQL — the PostgreSQL variant can override this.
-            double value = aggregation switch
-            {
-                TelemetryAggregation.Count => count,
-                _ => count, // Metric-level Avg/Min/Max requires JSONB extraction — see PostgreSQL override
-            };
-
-            return new TelemetryAggregate(value, count, rangeStart, rangeEnd);
+            return count == 0
+                ? null
+                : new TelemetryAggregate(count, count, rangeStart, rangeEnd);
         }, cancellationToken).ConfigureAwait(false);
     }
 }

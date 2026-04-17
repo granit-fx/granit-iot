@@ -1,4 +1,3 @@
-using Granit.IoT.Diagnostics;
 using Granit.IoT.Ingestion.Abstractions;
 using Granit.Validation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -37,7 +36,6 @@ internal static class IngestionEndpoints
         string source,
         HttpRequest request,
         [FromServices] IIngestionPipeline pipeline,
-        [FromServices] IoTMetrics metrics,
         CancellationToken cancellationToken)
     {
         if (!IsJsonContentType(request.ContentType))

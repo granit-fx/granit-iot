@@ -2,7 +2,7 @@ using Granit.IoT.BackgroundJobs.Services;
 
 namespace Granit.IoT.BackgroundJobs.Jobs;
 
-public class StaleTelemetryPurgeHandler
+public static class StaleTelemetryPurgeHandler
 {
     public static Task HandleAsync(
         StaleTelemetryPurgeJob _,
