@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Granit.Settings" />
     <PackageReference Include="Granit.Vault" />
     <PackageReference Include="MQTTnet" />
     <PackageReference Include="Polly" />
