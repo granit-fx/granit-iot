@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Mqtt</PackageId>
+    <Description>MQTT transport adapter abstractions for the Granit.IoT ingestion pipeline. Add Granit.IoT.Mqtt.Mqttnet for the MQTTnet v5 implementation.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Mqtt.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.Mqtt.Mqttnet" />
+    <InternalsVisibleTo Include="Granit.IoT.Mqtt.Mqttnet.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Features" />
+    <PackageReference Include="Granit.Settings" />
+  </ItemGroup>
+</Project>
