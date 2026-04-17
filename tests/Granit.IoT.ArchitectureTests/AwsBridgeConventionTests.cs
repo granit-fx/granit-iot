@@ -18,16 +18,31 @@ public sealed class AwsBridgeConventionTests
     private static readonly ArchUnitNET.Domain.Architecture Architecture = IoTArchitecture.Instance;
 
     [Fact]
-    public void Module_should_live_at_the_root_of_the_namespace()
+    public void Each_aws_subpackage_has_exactly_one_module_at_its_root()
     {
+        // Every sub-package in the AWS bridge family ships exactly one
+        // GranitModule at the package root namespace. Adding a new
+        // sub-package without a matching module — or accidentally placing
+        // the module under a sub-namespace — fails this test.
+        string[] expectedModules =
+        [
+            "Granit.IoT.Aws.GranitIoTAwsModule",
+            "Granit.IoT.Aws.EntityFrameworkCore.GranitIoTAwsEntityFrameworkCoreModule",
+            "Granit.IoT.Aws.Provisioning.GranitIoTAwsProvisioningModule",
+            "Granit.IoT.Aws.Shadow.GranitIoTAwsShadowModule",
+            "Granit.IoT.Aws.Jobs.GranitIoTAwsJobsModule",
+            "Granit.IoT.Aws.FleetProvisioning.GranitIoTAwsFleetProvisioningModule",
+        ];
+
         var modules = Architecture.Classes
             .Where(c => c.FullName.StartsWith(AwsNamespacePrefix, StringComparison.Ordinal))
             .Where(c => !c.FullName.StartsWith("Granit.IoT.Aws.Tests", StringComparison.Ordinal))
             .Where(c => c.Name.EndsWith("Module", StringComparison.Ordinal))
+            .Select(c => c.FullName)
+            .OrderBy(name => name, StringComparer.Ordinal)
             .ToList();
 
-        modules.Count.ShouldBe(1);
-        modules[0].FullName.ShouldBe("Granit.IoT.Aws.GranitIoTAwsModule");
+        modules.ShouldBe(expectedModules.OrderBy(n => n, StringComparer.Ordinal).ToArray());
     }
 
     [Fact]
