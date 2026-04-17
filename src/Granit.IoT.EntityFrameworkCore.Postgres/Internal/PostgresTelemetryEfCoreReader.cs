@@ -22,7 +22,7 @@ internal class PostgresTelemetryEfCoreReader(
 {
     private readonly ICurrentTenant? _currentTenant = currentTenant;
 
-    public override async Task<TelemetryAggregate?> GetAggregateAsync(
+    public override Task<TelemetryAggregate?> GetAggregateAsync(
         Guid deviceId,
         string metricName,
         DateTimeOffset rangeStart,
@@ -41,19 +41,46 @@ internal class PostgresTelemetryEfCoreReader(
             _ => throw new ArgumentOutOfRangeException(nameof(aggregation), aggregation, null),
         };
 
-        return await ReadAsync(async db =>
-        {
-            string table = QualifiedTelemetryTable();
-            string tenantPredicate = BuildTenantPredicate(out Guid? tenantFilterValue);
-
-            string sql =
+        return ExecuteAggregateSqlAsync(
+            tenantPredicate =>
                 $"SELECT {aggregateExpr} AS \"Value\", COUNT(*) AS \"Count\" " +
-                $"FROM {table} " +
+                $"FROM {QualifiedTelemetryTable()} " +
                 "WHERE \"DeviceId\" = @deviceId " +
                 "  AND \"RecordedAt\" >= @rangeStart " +
                 "  AND \"RecordedAt\" <= @rangeEnd " +
                 "  AND \"Metrics\" ? @metric" +
-                tenantPredicate;
+                tenantPredicate,
+            deviceId,
+            metricName,
+            rangeStart,
+            rangeEnd,
+            cancellationToken);
+    }
+
+    /// <summary>
+    /// Executes a raw aggregate SQL statement with the standard
+    /// <c>@deviceId / @metric / @rangeStart / @rangeEnd</c> parameters and an
+    /// optional <c>@tenantId</c> appended via
+    /// <see cref="BuildTenantPredicate"/>. <paramref name="sqlBuilder"/>
+    /// receives the tenant-predicate suffix (empty or
+    /// <c>" AND \"TenantId\" = @tenantId"</c>) and returns the final SQL,
+    /// which must project two columns: <c>Value</c> (nullable double) and
+    /// <c>Count</c> (long).
+    /// </summary>
+    protected Task<TelemetryAggregate?> ExecuteAggregateSqlAsync(
+        Func<string, string> sqlBuilder,
+        Guid deviceId,
+        string metricName,
+        DateTimeOffset rangeStart,
+        DateTimeOffset rangeEnd,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(sqlBuilder);
+
+        return ReadAsync(async db =>
+        {
+            string tenantPredicate = BuildTenantPredicate(out Guid? tenantFilterValue);
+            string sql = sqlBuilder(tenantPredicate);
 
             List<NpgsqlParameter> parameters =
             [
@@ -71,13 +98,10 @@ internal class PostgresTelemetryEfCoreReader(
                 .SqlQueryRaw<AggregateRow>(sql, [.. parameters])
                 .SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
-            if (row is null || row.Count == 0)
-            {
-                return null;
-            }
-
-            return new TelemetryAggregate(row.Value ?? 0d, row.Count, rangeStart, rangeEnd);
-        }, cancellationToken).ConfigureAwait(false);
+            return row is null || row.Count == 0
+                ? null
+                : new TelemetryAggregate(row.Value ?? 0d, row.Count, rangeStart, rangeEnd);
+        }, cancellationToken);
     }
 
     protected static string QualifiedTelemetryTable()
@@ -105,5 +129,5 @@ internal class PostgresTelemetryEfCoreReader(
         return string.Empty;
     }
 
-    protected sealed record AggregateRow(double? Value, long Count);
+    private sealed record AggregateRow(double? Value, long Count);
 }

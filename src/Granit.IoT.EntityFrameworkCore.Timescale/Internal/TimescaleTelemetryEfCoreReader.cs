@@ -3,7 +3,6 @@ using Granit.IoT.EntityFrameworkCore.Internal;
 using Granit.IoT.EntityFrameworkCore.Postgres.Internal;
 using Granit.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace Granit.IoT.EntityFrameworkCore.Timescale.Internal;
 
@@ -41,10 +40,36 @@ internal sealed class TimescaleTelemetryEfCoreReader(
 
         string? aggregateView = SelectAggregateView(rangeEnd - rangeStart);
 
-        return aggregateView is null
-            ? base.GetAggregateAsync(deviceId, metricName, rangeStart, rangeEnd, aggregation, cancellationToken)
-            : QueryContinuousAggregateAsync(
-                aggregateView, deviceId, metricName, rangeStart, rangeEnd, aggregation, cancellationToken);
+        if (aggregateView is null)
+        {
+            return base.GetAggregateAsync(deviceId, metricName, rangeStart, rangeEnd, aggregation, cancellationToken);
+        }
+
+        // Continuous aggregates already store avg/min/max/count per (bucket, device, metric).
+        // For Avg we take the count-weighted average across buckets; Min/Max bubble up; Count sums.
+        string selectExpr = aggregation switch
+        {
+            TelemetryAggregation.Avg => "COALESCE(SUM(avg_value * count) / NULLIF(SUM(count), 0), 0)",
+            TelemetryAggregation.Min => "MIN(min_value)",
+            TelemetryAggregation.Max => "MAX(max_value)",
+            TelemetryAggregation.Count => "SUM(count)::double precision",
+            _ => throw new ArgumentOutOfRangeException(nameof(aggregation), aggregation, null),
+        };
+
+        return ExecuteAggregateSqlAsync(
+            tenantPredicate =>
+                $"SELECT {selectExpr} AS \"Value\", COALESCE(SUM(count), 0) AS \"Count\" " +
+                $"FROM \"{aggregateView}\" " +
+                "WHERE \"DeviceId\" = @deviceId " +
+                "  AND \"MetricName\" = @metric " +
+                "  AND bucket >= @rangeStart " +
+                "  AND bucket < @rangeEnd" +
+                tenantPredicate,
+            deviceId,
+            metricName,
+            rangeStart,
+            rangeEnd,
+            cancellationToken);
     }
 
     /// <summary>
@@ -65,63 +90,5 @@ internal sealed class TimescaleTelemetryEfCoreReader(
         }
 
         return null;
-    }
-
-    private async Task<TelemetryAggregate?> QueryContinuousAggregateAsync(
-        string viewName,
-        Guid deviceId,
-        string metricName,
-        DateTimeOffset rangeStart,
-        DateTimeOffset rangeEnd,
-        TelemetryAggregation aggregation,
-        CancellationToken cancellationToken)
-    {
-        // Continuous aggregates already store avg/min/max/count per (bucket, device, metric).
-        // For Avg we take the count-weighted average across buckets; Min/Max bubble up; Count sums.
-        string selectExpr = aggregation switch
-        {
-            TelemetryAggregation.Avg => "COALESCE(SUM(avg_value * count) / NULLIF(SUM(count), 0), 0)",
-            TelemetryAggregation.Min => "MIN(min_value)",
-            TelemetryAggregation.Max => "MAX(max_value)",
-            TelemetryAggregation.Count => "SUM(count)::double precision",
-            _ => throw new ArgumentOutOfRangeException(nameof(aggregation), aggregation, null),
-        };
-
-        return await ReadAsync(async db =>
-        {
-            string tenantPredicate = BuildTenantPredicate(out Guid? tenantFilterValue);
-
-            string sql =
-                $"SELECT {selectExpr} AS \"Value\", COALESCE(SUM(count), 0) AS \"Count\" " +
-                $"FROM \"{viewName}\" " +
-                "WHERE \"DeviceId\" = @deviceId " +
-                "  AND \"MetricName\" = @metric " +
-                "  AND bucket >= @rangeStart " +
-                "  AND bucket < @rangeEnd" +
-                tenantPredicate;
-
-            List<NpgsqlParameter> parameters =
-            [
-                new("deviceId", deviceId),
-                new("metric", metricName),
-                new("rangeStart", rangeStart),
-                new("rangeEnd", rangeEnd),
-            ];
-            if (tenantFilterValue is { } tenantValue)
-            {
-                parameters.Add(new NpgsqlParameter("tenantId", tenantValue));
-            }
-
-            AggregateRow? row = await db.Database
-                .SqlQueryRaw<AggregateRow>(sql, [.. parameters])
-                .SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false);
-
-            if (row is null || row.Count == 0)
-            {
-                return null;
-            }
-
-            return new TelemetryAggregate(row.Value ?? 0d, row.Count, rangeStart, rangeEnd);
-        }, cancellationToken).ConfigureAwait(false);
     }
 }
