@@ -76,6 +76,16 @@
     <!-- Guids & Timing -->
     <PackageVersion Include="Granit.Guids" Version="0.1.0-dev.*" />
     <PackageVersion Include="Granit.Timing" Version="0.1.0-dev.*" />
+    <!-- Features (gating) & Vault (secret retrieval) -->
+    <PackageVersion Include="Granit.Features" Version="0.1.0-dev.*" />
+    <PackageVersion Include="Granit.Vault" Version="0.1.0-dev.*" />
+  </ItemGroup>
+
+  <!-- MQTT bridge (Phase 2 — Feature #5) -->
+  <ItemGroup Label="MQTT">
+    <!-- MQTTnet v5: pin patch deliberately; v5.0 → v5.1 had breaking changes historically. -->
+    <PackageVersion Include="MQTTnet" Version="5.0.1.1416" />
+    <PackageVersion Include="Polly" Version="8.5.*" />
   </ItemGroup>
 
   <!-- Security patches: transitive dependency version overrides -->

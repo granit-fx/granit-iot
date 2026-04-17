@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Granit.IoT.Mqtt.Mqttnet</PackageId>
+    <Description>MQTTnet v5 implementation of IIoTMqttBridge with mTLS client certificate authentication and Polly-based reconnect.</Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Granit.IoT.Mqtt.Mqttnet.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.ArchitectureTests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Granit.IoT.Mqtt\Granit.IoT.Mqtt.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Granit.Vault" />
+    <PackageReference Include="MQTTnet" />
+    <PackageReference Include="Polly" />
+  </ItemGroup>
+</Project>

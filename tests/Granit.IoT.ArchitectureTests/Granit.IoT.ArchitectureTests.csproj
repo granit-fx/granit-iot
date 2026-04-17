@@ -14,6 +14,8 @@
     <ProjectReference Include="..\..\src\Granit.IoT.Ingestion\Granit.IoT.Ingestion.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Ingestion.Endpoints\Granit.IoT.Ingestion.Endpoints.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Ingestion.Scaleway\Granit.IoT.Ingestion.Scaleway.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Mqtt\Granit.IoT.Mqtt.csproj" />
+    <ProjectReference Include="..\..\src\Granit.IoT.Mqtt.Mqttnet\Granit.IoT.Mqtt.Mqttnet.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Notifications\Granit.IoT.Notifications.csproj" />
     <ProjectReference Include="..\..\src\Granit.IoT.Wolverine\Granit.IoT.Wolverine.csproj" />
   </ItemGroup>
