@@ -10,13 +10,12 @@ provider-agnostic `POST /iot/ingest/{source}` endpoint. No new endpoints, no
 new pipeline — just the validators, parsers, and the cert cache that AWS
 specifically requires.
 
-> [!NOTE]
-> The SNS path validator + the SigV4 core both ship. The wrappers that plug
-> SigV4 into the `IPayloadSignatureValidator` contract for the Direct and
-> API Gateway paths land alongside the dedicated endpoints in a follow-up,
-> because SigV4 needs HTTP method + path + query string — those are not
-> available from `body + headers` alone and have to come from the endpoint
-> layer.
+All three AWS IoT Core paths are now wired end-to-end through the
+provider-agnostic `POST /iot/ingest/{source}` endpoint. Deliveries from AWS
+hit `/iot/ingest/awsiotsns`, `/iot/ingest/awsiotdirect`, or
+`/iot/ingest/awsiotapigw` and flow through the same pipeline (signature
+validation → parse → dedup → outbox dispatch) as Scaleway, just with
+provider-specific validators and parsers.
 
 ## What this slice ships
 
@@ -44,6 +43,31 @@ specifically requires.
 - `ISigV4SigningKeyProvider` — host-supplied secret-key resolver, typically
   reading from `Granit.Vault`. Implementations must return `null` for
   unknown access keys so the validator can fail closed.
+- `DirectPayloadSignatureValidator` (`SourceName = "awsiotdirect"`) —
+  dual-mode: Bearer API key in Development, SigV4 everywhere else
+- `ApiGatewayPayloadSignatureValidator` (`SourceName = "awsiotapigw"`) —
+  SigV4 only
+- `AwsIoTRulePayloadParser` — parses the IoT Rule JSON envelope emitted by
+  a SELECT rule (`messageId`, `deviceId`, `timestamp`, `metrics`); registered
+  twice, once for Direct and once for API Gateway
+- `AwsIoTSnsPayloadParser` — strips the outer SNS envelope and delegates to
+  the IoT Rule parser on the inner `Message` string
+
+## IoT Rule SQL shape
+
+Your AWS IoT Rule must SELECT fields that match `AwsIoTRuleEnvelope`:
+
+```sql
+SELECT
+    newuuid() AS messageId,
+    clientId() AS deviceId,
+    timestamp() AS timestamp,    -- Unix ms, or use parse_time('yyyy-MM-dd''T''HH:mm:ss.SSSZ', timestamp()) AS timestamp for ISO-8601
+    payload AS metrics           -- object: {"temperature": 22.5, ...}
+FROM 'granit/telemetry/+'
+```
+
+The parser accepts `timestamp` as either Unix milliseconds (what
+`timestamp()` returns) or an ISO-8601 string.
 
 ## Two layers of cert security
 
@@ -157,6 +181,20 @@ The validator is verified against the AWS public
 it reproduces the canonical request, string-to-sign, and signature
 (`5fa00fa31553b73ebf1942676e86291e8372ff2a2260956d9b8aae1d763fbf31`) byte for
 byte. Any drift from the AWS spec breaks that test before merge.
+
+### Server-controlled request metadata
+
+SigV4 canonical requests include the HTTP method, path, and query string —
+none of which are reachable from `(body, headers)` alone. The ingestion
+endpoint injects three synthetic headers
+(`granit-request-method` / `-path` / `-query`) **after stripping any
+client-provided values with the same prefix**. The validators read those
+synthetic headers; malicious callers cannot lie about what they signed
+because their `granit-request-*` headers are overwritten before the
+validator sees them.
+
+Trust boundary: `Granit.IoT.Ingestion.Endpoints` — see
+`IngestionEndpoints.InjectServerControlledRequestHeaders`.
 
 ## Anti-patterns to avoid
 

@@ -60,7 +60,7 @@ public sealed class AwsIngestionConventionTests
     [Fact]
     public void Signature_validators_must_implement_IPayloadSignatureValidator()
     {
-        IReadOnlyList<Class> validators = Architecture.Classes
+        var validators = Architecture.Classes
             .Where(c => c.FullName.StartsWith(InternalNamespacePrefix, StringComparison.Ordinal))
             .Where(c => c.Name.EndsWith("SignatureValidator", StringComparison.Ordinal))
             .ToList();
@@ -74,5 +74,29 @@ public sealed class AwsIngestionConventionTests
         notImplementing.ShouldBeEmpty(
             $"Every *SignatureValidator must implement {ValidatorInterface}. " +
             $"Violators: {string.Join(", ", notImplementing.Select(c => c.FullName))}");
+    }
+
+    [Fact]
+    public void Every_AWS_source_name_has_both_a_validator_and_a_parser()
+    {
+        // Every AWS inbound source must have both a validator (for authn) and
+        // a parser (for content) — a mismatch means inbound traffic is either
+        // unverified or can't be understood.
+        string[] expectedSources = ["awsiotsns", "awsiotdirect", "awsiotapigw"];
+
+        var validators = Architecture.Classes
+            .Where(c => c.FullName.StartsWith(InternalNamespacePrefix, StringComparison.Ordinal))
+            .Where(c => c.Name.EndsWith("SignatureValidator", StringComparison.Ordinal))
+            .ToList();
+
+        var parsers = Architecture.Classes
+            .Where(c => c.FullName.StartsWith(InternalNamespacePrefix, StringComparison.Ordinal))
+            .Where(c => c.Name.EndsWith("Parser", StringComparison.Ordinal))
+            .ToList();
+
+        parsers.ShouldNotBeEmpty(
+            "Expected AWS payload parsers under Granit.IoT.Ingestion.Aws.Internal.");
+        validators.Count.ShouldBe(expectedSources.Length,
+            $"Expected one validator per source ({string.Join(", ", expectedSources)}).");
     }
 }
