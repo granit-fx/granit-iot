@@ -25,6 +25,7 @@
     <Project Path="tests/Granit.IoT.Mqtt.Tests/Granit.IoT.Mqtt.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Mqtt.Mqttnet.Tests/Granit.IoT.Mqtt.Mqttnet.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Notifications.Tests/Granit.IoT.Notifications.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.EntityFrameworkCore.Postgres.Tests/Granit.IoT.EntityFrameworkCore.Postgres.Tests.csproj" />
     <Project Path="tests/Granit.IoT.BackgroundJobs.Tests/Granit.IoT.BackgroundJobs.Tests.csproj" />
     <Project Path="tests/Granit.IoT.Timeline.Tests/Granit.IoT.Timeline.Tests.csproj" />
   </Folder>
