@@ -2,6 +2,7 @@
   "config": {
     "MD013": false,
     "MD024": { "siblings_only": true },
+    "MD028": false,
     "MD041": false
   }
 }
