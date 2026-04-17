@@ -2,7 +2,7 @@
 
 Granit.IoT is a modular IoT device management and telemetry ingestion platform
 built on the [Granit framework](https://github.com/granit-fx/granit-dotnet) for
-.NET 10. It ships 14 focused NuGet packages plus a meta-bundle, organized in
+.NET 10. It ships 15 focused NuGet packages plus a meta-bundle, organized in
 three cohesion rings, and gives B2B SaaS teams a production-ready foundation
 to manage IoT devices, ingest sensor data, trigger alerts, and stay compliant
 with GDPR and ISO 27001 — without rebuilding the plumbing.
@@ -60,6 +60,7 @@ flowchart TB
     EP["Granit.IoT.Endpoints"]
     EF["Granit.IoT.EntityFrameworkCore"]
     EFP["Granit.IoT.EntityFrameworkCore.Postgres"]
+    EFT["Granit.IoT.EntityFrameworkCore.Timescale"]
     BJ["Granit.IoT.BackgroundJobs"]
   end
   R2 --> R1
@@ -77,6 +78,7 @@ The core domain and its persistence. No network I/O, no external providers.
 | [`Granit.IoT.Endpoints`](../src/Granit.IoT.Endpoints/README.md) | Minimal API route group `/iot/devices` + `/iot/telemetry` with permissions, FluentValidation, tenant scoping |
 | [`Granit.IoT.EntityFrameworkCore`](../src/Granit.IoT.EntityFrameworkCore/README.md) | `IoTDbContext`, EF Core configurations, reader/writer implementations with named query filters |
 | [`Granit.IoT.EntityFrameworkCore.Postgres`](../src/Granit.IoT.EntityFrameworkCore.Postgres/README.md) | PostgreSQL-specific migrations: BRIN index on `recorded_at`, GIN index on `metrics` JSONB, RANGE partitioning helpers |
+| [`Granit.IoT.EntityFrameworkCore.Timescale`](../src/Granit.IoT.EntityFrameworkCore.Timescale/README.md) | Opt-in TimescaleDB backend: hypertable conversion, hourly/daily continuous aggregates, reader that routes on window size |
 | [`Granit.IoT.BackgroundJobs`](../src/Granit.IoT.BackgroundJobs/) | Recurring jobs: stale telemetry purge, device heartbeat timeout, monthly partition maintenance |
 
 ### Ring 2 — Ingestion & transport
@@ -198,8 +200,11 @@ native features:
 - **Monthly RANGE partitioning** — `TelemetryPartitionMaintenanceJob`
   provisions the next two months every Sunday at 01:00
 
-TimescaleDB support is Phase 3 opt-in via
-`Granit.IoT.EntityFrameworkCore.Timescale` (not yet released).
+TimescaleDB support is available (Phase 3) as an opt-in backend via
+[`Granit.IoT.EntityFrameworkCore.Timescale`](../src/Granit.IoT.EntityFrameworkCore.Timescale/README.md) —
+hypertable conversion + hourly/daily continuous aggregates. Teams past ~100M
+rows/day should adopt it; everyone else stays on the default backend. See
+the [TimescaleDB guide](timescaledb.md) for the adoption decision tree.
 
 ### No separate rules engine, no new notification infrastructure
 

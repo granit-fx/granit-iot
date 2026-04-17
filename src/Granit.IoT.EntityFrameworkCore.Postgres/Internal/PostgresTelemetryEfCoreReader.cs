@@ -15,7 +15,7 @@ namespace Granit.IoT.EntityFrameworkCore.Postgres.Internal;
 /// cannot translate indexer/<c>ContainsKey</c> on a JSONB-mapped
 /// <see cref="IReadOnlyDictionary{TKey,TValue}"/>.
 /// </summary>
-internal sealed class PostgresTelemetryEfCoreReader(
+internal class PostgresTelemetryEfCoreReader(
     IDbContextFactory<IoTDbContext> contextFactory,
     ICurrentTenant? currentTenant = null)
     : TelemetryEfCoreReader(contextFactory, currentTenant)
@@ -80,7 +80,7 @@ internal sealed class PostgresTelemetryEfCoreReader(
         }, cancellationToken).ConfigureAwait(false);
     }
 
-    private static string QualifiedTelemetryTable()
+    protected static string QualifiedTelemetryTable()
     {
         string tableName = GranitIoTDbProperties.DbTablePrefix + "telemetry_points";
         string? schema = GranitIoTDbProperties.DbSchema;
@@ -89,7 +89,7 @@ internal sealed class PostgresTelemetryEfCoreReader(
             : $"\"{schema}\".\"{tableName}\"";
     }
 
-    private string BuildTenantPredicate(out Guid? tenantFilterValue)
+    protected string BuildTenantPredicate(out Guid? tenantFilterValue)
     {
         // Raw SQL bypasses EF Core query filters. Replicate the multi-tenant filter
         // behavior: when a tenant is active, constrain to its rows. When running in
@@ -105,5 +105,5 @@ internal sealed class PostgresTelemetryEfCoreReader(
         return string.Empty;
     }
 
-    private sealed record AggregateRow(double? Value, long Count);
+    protected sealed record AggregateRow(double? Value, long Count);
 }

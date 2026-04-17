@@ -2,7 +2,7 @@
 
 ## Project
 
-- **Type**: IoT module family — 12 NuGet packages (3 cohesion rings)
+- **Type**: IoT module family — 15 NuGet packages (3 cohesion rings) plus a meta-bundle
 - **Repo**: `granit-fx/granit-iot` (GitHub, open-source, Apache-2.0)
 - **Framework dependency**: Published `Granit.*` packages from `granit-dotnet` (via GitHub Packages)
 - **Compliance**: GDPR + ISO 27001 (audit trail, tenant isolation, encrypted credentials)

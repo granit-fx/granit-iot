@@ -12,6 +12,8 @@
     <InternalsVisibleTo Include="Granit.IoT.BackgroundJobs" />
     <InternalsVisibleTo Include="Granit.IoT.BackgroundJobs.Tests" />
     <InternalsVisibleTo Include="Granit.IoT.EntityFrameworkCore.Postgres.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.EntityFrameworkCore.Timescale" />
+    <InternalsVisibleTo Include="Granit.IoT.EntityFrameworkCore.Timescale.Tests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 

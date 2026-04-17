@@ -32,6 +32,7 @@ SaaS teams a production-ready foundation to:
 | [Telemetry ingestion](telemetry-ingestion.md) | Provider-agnostic pipeline, Scaleway IoT Hub provider, HMAC-SHA256, Redis deduplication, Wolverine outbox, threshold evaluation |
 | [MQTT](mqtt.md) | MQTT 3.1.1 / 5.0 broker integration via MQTTnet — Mosquitto, EMQX, HiveMQ, self-hosted, or Scaleway IoT Hub in MQTT mode |
 | [Operational hardening](operational-hardening.md) | `StaleTelemetryPurgeJob`, `DeviceHeartbeatTimeoutJob`, `TelemetryPartitionMaintenanceJob` — the jobs that keep the system healthy at scale |
+| [TimescaleDB backend](timescaledb.md) | Opt-in hypertable + continuous aggregates for billion-row telemetry tables, when and how to adopt |
 | [Notifications bridge](notifications-bridge.md) | Threshold alerts and device-offline alerts via `Granit.Notifications`, per-tenant configuration |
 | [Timeline bridge](timeline-bridge.md) | Device lifecycle events become audit chatter in `Granit.Timeline` — ISO 27001 asset traceability |
 | [MCP bridge](mcp.md) | IoT readers exposed as MCP tools so AI assistants can query the fleet in natural language, tenant-scoped |
@@ -55,6 +56,7 @@ and direct dependencies. The documentation here links to them.
 - [`Granit.IoT.Endpoints`](../src/Granit.IoT.Endpoints/README.md) — device CRUD API
 - [`Granit.IoT.EntityFrameworkCore`](../src/Granit.IoT.EntityFrameworkCore/README.md) — persistence
 - [`Granit.IoT.EntityFrameworkCore.Postgres`](../src/Granit.IoT.EntityFrameworkCore.Postgres/README.md) — PostgreSQL migrations
+- [`Granit.IoT.EntityFrameworkCore.Timescale`](../src/Granit.IoT.EntityFrameworkCore.Timescale/README.md) — TimescaleDB backend (opt-in)
 - [`Granit.IoT.BackgroundJobs`](../src/Granit.IoT.BackgroundJobs/) — purge, heartbeat, partition maintenance
 - [`Granit.IoT.Ingestion`](../src/Granit.IoT.Ingestion/README.md) — ingestion pipeline
 - [`Granit.IoT.Ingestion.Endpoints`](../src/Granit.IoT.Ingestion.Endpoints/README.md) — webhook endpoint
