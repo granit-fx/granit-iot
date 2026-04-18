@@ -133,14 +133,11 @@ public sealed class TelemetryPoint : CreationAuditedEntity, IMultiTenant
                 $"{MaxMetricKeyLength}-character cap.", nameof(key));
         }
 
-        foreach (char c in key)
+        if (key.Any(c => char.IsControl(c) || char.IsWhiteSpace(c)))
         {
-            if (char.IsControl(c) || char.IsWhiteSpace(c))
-            {
-                throw new ArgumentException(
-                    $"Telemetry metric key contains an illegal control or whitespace character.",
-                    nameof(key));
-            }
+            throw new ArgumentException(
+                "Telemetry metric key contains an illegal control or whitespace character.",
+                nameof(key));
         }
     }
 }

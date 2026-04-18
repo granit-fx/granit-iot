@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Granit.Guids;
 using Granit.IoT.Abstractions;
@@ -12,6 +13,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Granit.IoT.Aws.FleetProvisioning.Internal;
 
+[SuppressMessage(
+    "Major Code Smell",
+    "S107:Methods should not have too many parameters",
+    Justification =
+        "Saga coordinator that needs explicit CQRS reader+writer pairs for both aggregates " +
+        "(Device, AwsThingBinding), plus id/tenant/policy/metrics/logger. Granit's framework " +
+        "convention mandates separate IXxxReader / IXxxWriter (see CLAUDE.md §Module conventions) — " +
+        "collapsing them into a repository wrapper would fight that convention. All dependencies " +
+        "are first-class services; none can be folded without losing single-responsibility.")]
 internal sealed partial class FleetProvisioningService(
     IDeviceReader deviceReader,
     IDeviceWriter deviceWriter,

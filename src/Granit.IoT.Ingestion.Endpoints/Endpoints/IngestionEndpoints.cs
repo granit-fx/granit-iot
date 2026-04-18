@@ -83,7 +83,7 @@ internal static class IngestionEndpoints
                     statusCode: StatusCodes.Status413PayloadTooLarge);
             }
 
-            memory.Write(buffer, 0, read);
+            await memory.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
         }
 
         ReadOnlyMemory<byte> body = memory.ToArray();
