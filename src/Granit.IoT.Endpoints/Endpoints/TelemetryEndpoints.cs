@@ -42,7 +42,7 @@ internal static class TelemetryEndpoints
         return group;
     }
 
-    private static async Task<Results<Ok<IReadOnlyList<TelemetryPointResponse>>, NotFound>> QueryTelemetryAsync(
+    internal static async Task<Results<Ok<IReadOnlyList<TelemetryPointResponse>>, NotFound>> QueryTelemetryAsync(
         Guid deviceId,
         [FromServices] IDeviceReader deviceReader,
         [FromServices] ITelemetryReader telemetryReader,
@@ -70,7 +70,7 @@ internal static class TelemetryEndpoints
             points.Select(ToResponse).ToList());
     }
 
-    private static async Task<Results<Ok<TelemetryPointResponse>, NotFound>> GetLatestTelemetryAsync(
+    internal static async Task<Results<Ok<TelemetryPointResponse>, NotFound>> GetLatestTelemetryAsync(
         Guid deviceId,
         [FromServices] IDeviceReader deviceReader,
         [FromServices] ITelemetryReader telemetryReader,
@@ -93,7 +93,7 @@ internal static class TelemetryEndpoints
         return TypedResults.Ok(ToResponse(point));
     }
 
-    private static async Task<Results<Ok<TelemetryAggregateResponse>, NotFound>> GetTelemetryAggregateAsync(
+    internal static async Task<Results<Ok<TelemetryAggregateResponse>, NotFound>> GetTelemetryAggregateAsync(
         Guid deviceId,
         string metric,
         TelemetryAggregation aggregation,
@@ -131,7 +131,7 @@ internal static class TelemetryEndpoints
             aggregate.RangeEnd));
     }
 
-    private static async Task<bool> DeviceExistsAsync(
+    internal static async Task<bool> DeviceExistsAsync(
         Guid deviceId,
         IDeviceReader deviceReader,
         CancellationToken cancellationToken)

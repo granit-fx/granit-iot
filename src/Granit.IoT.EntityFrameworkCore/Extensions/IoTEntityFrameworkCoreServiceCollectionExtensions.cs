@@ -7,8 +7,18 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Granit.IoT.EntityFrameworkCore.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the IoT EF Core layer
+/// (<c>Granit.IoT.EntityFrameworkCore</c>).
+/// </summary>
 public static class IoTEntityFrameworkCoreServiceCollectionExtensions
 {
+    /// <summary>
+    /// Registers the isolated <c>IoTDbContext</c> (via
+    /// <c>AddGranitDbContext</c>) and the EF Core implementations of
+    /// <c>IDeviceReader</c>/<c>IDeviceWriter</c>/<c>IDeviceLookup</c>/<c>ITelemetryReader</c>/<c>ITelemetryWriter</c>/<c>ITelemetryPurger</c>.
+    /// Idempotent via <c>TryAdd*</c>.
+    /// </summary>
     public static IServiceCollection AddGranitIoTEntityFrameworkCore(
         this IServiceCollection services,
         Action<DbContextOptionsBuilder> configure)

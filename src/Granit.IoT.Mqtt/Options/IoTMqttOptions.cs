@@ -8,6 +8,7 @@ namespace Granit.IoT.Mqtt.Options;
 /// </summary>
 public sealed class IoTMqttOptions
 {
+    /// <summary>Configuration section name for binding via <c>BindConfiguration(SectionName)</c>.</summary>
     public const string SectionName = "IoT:Mqtt";
 
     /// <summary>
@@ -33,6 +34,7 @@ public sealed class IoTMqttOptions
     [Range(1, 10 * 1024 * 1024)]
     public int MaxPayloadBytes { get; set; } = MaxPayloadBytesDefault;
 
+    /// <summary>Default cap on <see cref="MaxPayloadBytes"/> (256 KiB) — matches the HTTP webhook limit.</summary>
     public const int MaxPayloadBytesDefault = 256 * 1024;
 
     /// <summary>MQTT keep-alive (seconds) sent in the CONNECT packet.</summary>

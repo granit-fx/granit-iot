@@ -18,6 +18,11 @@ public static partial class ShadowDesiredStateCommandHandler
     /// <summary>Operation name embedded in the dispatched Job document.</summary>
     public const string OperationName = "shadow.applyDesiredState";
 
+    /// <summary>
+    /// Handles <see cref="DeviceDesiredStateChangedEvent"/> — dispatches a
+    /// <c>shadow.applyDesiredState</c> job against the bound AWS Thing with
+    /// a deterministic correlation id derived from the shadow version.
+    /// </summary>
     public static async Task HandleAsync(
         DeviceDesiredStateChangedEvent message,
         IAwsThingBindingReader bindings,

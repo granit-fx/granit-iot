@@ -17,7 +17,7 @@ internal sealed class ThingProvisioningService(
     IAmazonSecretsManager secrets,
     IAwsIoTCredentialProvider credentials,
     IOptions<AwsThingProvisioningOptions> options,
-    AwsProvisioningMetrics metrics,
+    IoTAwsProvisioningMetrics metrics,
     ILogger<ThingProvisioningService> logger)
     : IThingProvisioningService
 {
@@ -25,7 +25,7 @@ internal sealed class ThingProvisioningService(
     private readonly IAmazonSecretsManager _secrets = secrets;
     private readonly IAwsIoTCredentialProvider _credentials = credentials;
     private readonly AwsThingProvisioningOptions _options = options.Value;
-    private readonly AwsProvisioningMetrics _metrics = metrics;
+    private readonly IoTAwsProvisioningMetrics _metrics = metrics;
     private readonly ILogger<ThingProvisioningService> _logger = logger;
 
     public async Task EnsureThingAsync(AwsThingBinding binding, CancellationToken cancellationToken)

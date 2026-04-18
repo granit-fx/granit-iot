@@ -8,6 +8,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Granit.IoT.Aws.Jobs.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the AWS IoT Jobs satellite
+/// (<c>Granit.IoT.Aws.Jobs</c>).
+/// </summary>
 public static class AwsJobsServiceCollectionExtensions
 {
     /// <summary>
@@ -23,10 +27,11 @@ public static class AwsJobsServiceCollectionExtensions
 
         services.AddOptions<AwsIoTJobsOptions>()
             .BindConfiguration(AwsIoTJobsOptions.SectionName)
-            .ValidateDataAnnotations();
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddSingleton<AwsJobsMetrics>();
+        services.TryAddSingleton<IoTAwsJobsMetrics>();
         services.TryAddSingleton<IJobTrackingStore, InMemoryJobTrackingStore>();
         services.TryAddScoped<IDeviceCommandDispatcher, AwsIoTJobsCommandDispatcher>();
         services.AddHostedService<IoTJobStatusPollingService>();

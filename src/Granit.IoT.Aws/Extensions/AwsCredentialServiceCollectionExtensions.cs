@@ -8,6 +8,10 @@ using Microsoft.Extensions.Options;
 
 namespace Granit.IoT.Aws.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the AWS bridge credential pipeline
+/// (<c>Granit.IoT.Aws</c>).
+/// </summary>
 public static class AwsCredentialServiceCollectionExtensions
 {
     /// <summary>
@@ -26,7 +30,8 @@ public static class AwsCredentialServiceCollectionExtensions
 
         services.AddOptions<AwsIoTCredentialOptions>()
             .BindConfiguration(AwsIoTCredentialOptions.SectionName)
-            .ValidateDataAnnotations();
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IValidateOptions<AwsIoTCredentialOptions>, AwsIoTCredentialOptionsValidator>());

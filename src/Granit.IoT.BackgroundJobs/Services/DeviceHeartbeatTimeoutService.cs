@@ -4,7 +4,6 @@ using Granit.IoT.BackgroundJobs.Internal;
 using Granit.IoT.Diagnostics;
 using Granit.IoT.Domain;
 using Granit.IoT.Events;
-using Granit.IoT.Notifications;
 using Granit.MultiTenancy;
 using Granit.Settings.Services;
 using Microsoft.Extensions.Logging;
@@ -40,6 +39,11 @@ public sealed partial class DeviceHeartbeatTimeoutService(
     internal const int BatchSize = 5000;
     private static readonly TimeSpan JobDeadline = TimeSpan.FromMinutes(4);
 
+    /// <summary>
+    /// Job entry point — bucketed per-tenant scan for devices whose last
+    /// heartbeat is older than the tenant timeout; publishes one
+    /// <c>DeviceOfflineDetectedEto</c> per newly offline device.
+    /// </summary>
     public async Task ExecuteAsync(CancellationToken jobCt)
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(jobCt);

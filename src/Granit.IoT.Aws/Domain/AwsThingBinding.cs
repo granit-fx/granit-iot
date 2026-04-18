@@ -17,6 +17,7 @@ public sealed class AwsThingBinding : FullAuditedAggregateRoot, IMultiTenant
     /// <summary>Foreign key to <c>Device.Id</c> (1:1 unique index in the database).</summary>
     public Guid DeviceId { get; private set; }
 
+    /// <summary>AWS IoT Thing name derived from <c>t{tenantId:N}-{serialNumber}</c>.</summary>
     public ThingName ThingName { get; private set; } = null!;
 
     /// <summary>AWS ARN of the IoT Thing. Null until <see cref="RecordThingCreated"/>.</summary>
@@ -28,6 +29,7 @@ public sealed class AwsThingBinding : FullAuditedAggregateRoot, IMultiTenant
     /// <summary>AWS Secrets Manager ARN holding the private key. Null until <see cref="RecordSecretStored"/>.</summary>
     public string? CertificateSecretArn { get; private set; }
 
+    /// <summary>Current saga checkpoint (Pending → ThingCreated → CertIssued → SecretStored → Active, with terminal Decommissioned / Failed).</summary>
     public AwsThingProvisioningStatus ProvisioningStatus { get; private set; }
 
     /// <summary>Last time the device pushed its <c>reported</c> shadow state.</summary>
@@ -43,9 +45,24 @@ public sealed class AwsThingBinding : FullAuditedAggregateRoot, IMultiTenant
     /// <summary>True when this binding was created through Fleet Provisioning (JITP).</summary>
     public bool ProvisionedViaJitp { get; private set; }
 
+    /// <summary>Non-null when <see cref="ProvisioningStatus"/> is <see cref="AwsThingProvisioningStatus.Failed"/>; carries the reason recorded by <see cref="MarkAsFailed"/>.</summary>
     public string? FailureReason { get; private set; }
 
-    public Guid? TenantId { get; set; }
+    /// <summary>
+    /// Tenant that owns the binding. Stamped at construction from the server-side
+    /// current-tenant context — never from client-supplied JITP body fields.
+    /// </summary>
+    public Guid? TenantId { get; private set; }
+
+    /// <summary>
+    /// Explicit <see cref="IMultiTenant.TenantId"/> implementation so only the
+    /// Granit audit interceptor can write this field during persistence.
+    /// </summary>
+    Guid? IMultiTenant.TenantId
+    {
+        get => TenantId;
+        set => TenantId = value;
+    }
 
     /// <summary>
     /// Reserves a binding row before any AWS API call. Status is
@@ -195,8 +212,10 @@ public sealed class AwsThingBinding : FullAuditedAggregateRoot, IMultiTenant
         FailureReason = reason;
     }
 
+    /// <summary>Records the timestamp of the last <c>reported</c>-state push from the device shadow.</summary>
     public void RecordShadowReportedAt(DateTimeOffset at) => LastShadowReportedAt = at;
 
+    /// <summary>Records the expiry of the JITP claim certificate so the rotation job can raise an alert before it elapses.</summary>
     public void RecordClaimCertificateExpiry(DateTimeOffset expiresAt) => ClaimCertificateExpiresAt = expiresAt;
 
     private void EnsureStatus(AwsThingProvisioningStatus expected, string operation)

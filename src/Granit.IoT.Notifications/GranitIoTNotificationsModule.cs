@@ -23,6 +23,7 @@ namespace Granit.IoT.Notifications;
 [DependsOn(typeof(GranitCachingModule))]
 public sealed class GranitIoTNotificationsModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

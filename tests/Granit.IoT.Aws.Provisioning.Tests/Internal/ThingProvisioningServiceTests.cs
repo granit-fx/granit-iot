@@ -34,7 +34,7 @@ public sealed class ThingProvisioningServiceTests
     private readonly IAmazonIoT _iot = Substitute.For<IAmazonIoT>();
     private readonly IAmazonSecretsManager _secrets = Substitute.For<IAmazonSecretsManager>();
     private readonly IAwsIoTCredentialProvider _credentials;
-    private readonly AwsProvisioningMetrics _metrics;
+    private readonly IoTAwsProvisioningMetrics _metrics;
 
     public ThingProvisioningServiceTests()
     {
@@ -42,7 +42,7 @@ public sealed class ThingProvisioningServiceTests
         _credentials.IsReady.Returns(true);
 
         IMeterFactory meterFactory = new TestMeterFactory();
-        _metrics = new AwsProvisioningMetrics(meterFactory);
+        _metrics = new IoTAwsProvisioningMetrics(meterFactory);
     }
 
     [Fact]

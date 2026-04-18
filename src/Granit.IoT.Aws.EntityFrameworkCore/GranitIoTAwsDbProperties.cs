@@ -10,11 +10,13 @@ namespace Granit.IoT.Aws.EntityFrameworkCore;
 /// </summary>
 public static class GranitIoTAwsDbProperties
 {
+    /// <summary>Table-name prefix (<c>iotaws_</c>) stamped on every table owned by the AWS bridge.</summary>
     public static string DbTablePrefix { get; set; } = "iotaws_";
 
     private static string? _dbSchema;
     private static bool _dbSchemaExplicitlySet;
 
+    /// <summary>Schema name holding the bridge's tables. Falls back to the host schema then the framework default when unset.</summary>
     public static string? DbSchema
     {
         get => _dbSchemaExplicitlySet

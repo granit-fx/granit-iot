@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Text.Json;
 using System.Threading;
+using Granit.IoT.Ingestion;
 using Granit.IoT.Ingestion.Abstractions;
 using Granit.IoT.Mqtt;
 using Granit.IoT.Mqtt.Internal;
@@ -28,7 +29,7 @@ internal sealed partial class MqttnetIoTBridge : IIoTMqttBridge, IHostedService,
     private readonly ICertificateLoader _certificateLoader;
     private readonly ISettingsTopicResolver _topicResolver;
     private readonly IOptionsMonitor<IoTMqttOptions> _options;
-    private readonly IoTMqttBridgeMetrics _metrics;
+    private readonly IoTMqttMetrics _metrics;
     private readonly TimeProvider _clock;
     private readonly ILogger<MqttnetIoTBridge> _logger;
 
@@ -47,7 +48,7 @@ internal sealed partial class MqttnetIoTBridge : IIoTMqttBridge, IHostedService,
         ICertificateLoader certificateLoader,
         ISettingsTopicResolver topicResolver,
         IOptionsMonitor<IoTMqttOptions> options,
-        IoTMqttBridgeMetrics metrics,
+        IoTMqttMetrics metrics,
         TimeProvider clock,
         ILogger<MqttnetIoTBridge> logger)
     {
@@ -283,14 +284,14 @@ internal sealed partial class MqttnetIoTBridge : IIoTMqttBridge, IHostedService,
         }
     }
 
-    private static MqttQualityOfServiceLevel ToQos(int level) => level switch
+    internal static MqttQualityOfServiceLevel ToQos(int level) => level switch
     {
         0 => MqttQualityOfServiceLevel.AtMostOnce,
         2 => MqttQualityOfServiceLevel.ExactlyOnce,
         _ => MqttQualityOfServiceLevel.AtLeastOnce,
     };
 
-    private static void EnsureSecureBrokerUri(string uri)
+    internal static void EnsureSecureBrokerUri(string uri)
     {
         if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri? parsed)
             || !string.Equals(parsed.Scheme, "mqtts", StringComparison.OrdinalIgnoreCase))
@@ -344,15 +345,21 @@ internal sealed partial class MqttnetIoTBridge : IIoTMqttBridge, IHostedService,
             return null;
         }
 
+        // The source-generated MqttJsonContext bounds the type tree; the
+        // Utf8JsonReader below caps parser depth so a crafted deeply-nested
+        // inner payload cannot stack-overflow on the MQTT hot path.
+        JsonReaderOptions readerOptions = new()
+        {
+            MaxDepth = IngestionJsonOptions.MaxDepth,
+            CommentHandling = JsonCommentHandling.Disallow,
+        };
+
         try
         {
-            if (payload.IsSingleSegment)
-            {
-                return JsonSerializer.Deserialize(payload.FirstSpan, MqttJsonContext.Default.InnerPayload);
-            }
-
-            byte[] copy = payload.ToArray();
-            return JsonSerializer.Deserialize(copy, MqttJsonContext.Default.InnerPayload);
+            Utf8JsonReader reader = payload.IsSingleSegment
+                ? new Utf8JsonReader(payload.FirstSpan, readerOptions)
+                : new Utf8JsonReader(payload, readerOptions);
+            return JsonSerializer.Deserialize(ref reader, MqttJsonContext.Default.InnerPayload);
         }
         catch (JsonException)
         {

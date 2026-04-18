@@ -1,6 +1,7 @@
 #pragma warning disable CA2012 // NSubstitute ValueTask setup — consumed exactly once per call
 using Granit.Http.Idempotency.Abstractions;
 using Granit.Http.Idempotency.Models;
+using Granit.IoT.Diagnostics;
 using Granit.IoT.Ingestion.Internal;
 using Granit.IoT.Ingestion.Options;
 using Granit.Timing;
@@ -87,6 +88,7 @@ public sealed class IdempotencyStoreInboundMessageDeduplicatorTests
             store,
             clock,
             options,
+            new IoTMetrics(new EmptyMeterFactory()),
             NullLogger<IdempotencyStoreInboundMessageDeduplicator>.Instance);
     }
 }

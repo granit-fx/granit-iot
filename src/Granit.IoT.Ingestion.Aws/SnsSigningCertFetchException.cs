@@ -12,9 +12,12 @@ namespace Granit.IoT.Ingestion.Aws;
 /// </remarks>
 public sealed class SnsSigningCertFetchException : Exception
 {
+    /// <summary>Initializes a new instance with the given message.</summary>
     public SnsSigningCertFetchException(string message) : base(message) { }
 
+    /// <summary>Initializes a new instance with the given message and inner exception.</summary>
     public SnsSigningCertFetchException(string message, Exception innerException) : base(message, innerException) { }
 
+    /// <summary>Initializes a new instance with a default message.</summary>
     public SnsSigningCertFetchException() { }
 }

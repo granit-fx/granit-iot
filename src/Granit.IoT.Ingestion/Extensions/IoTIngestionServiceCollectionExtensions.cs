@@ -7,8 +7,17 @@ using Microsoft.Extensions.Hosting;
 
 namespace Granit.IoT.Ingestion.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the provider-agnostic IoT ingestion
+/// pipeline (<c>Granit.IoT.Ingestion</c>).
+/// </summary>
 public static class IoTIngestionServiceCollectionExtensions
 {
+    /// <summary>
+    /// Registers the ingestion pipeline, the transport-level deduplicator
+    /// and (in Development only) the permissive
+    /// <c>NullPayloadSignatureValidator</c>. Idempotent via <c>TryAdd*</c>.
+    /// </summary>
     public static IServiceCollection AddGranitIoTIngestion(
         this IServiceCollection services,
         IHostEnvironment environment)
@@ -18,7 +27,8 @@ public static class IoTIngestionServiceCollectionExtensions
 
         services.AddOptions<GranitIoTIngestionOptions>()
             .BindConfiguration(GranitIoTIngestionOptions.SectionName)
-            .ValidateDataAnnotations();
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.TryAddScoped<IIngestionPipeline, IngestionPipeline>();
         services.TryAddScoped<IInboundMessageDeduplicator, IdempotencyStoreInboundMessageDeduplicator>();

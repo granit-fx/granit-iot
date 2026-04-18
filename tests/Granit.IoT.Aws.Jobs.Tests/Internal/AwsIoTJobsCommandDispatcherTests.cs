@@ -24,7 +24,7 @@ public sealed class AwsIoTJobsCommandDispatcherTests
     private readonly IAmazonIoT _iot = Substitute.For<IAmazonIoT>();
     private readonly InMemoryJobTrackingStore _tracking = new(new FakeTimeProvider(DateTimeOffset.UtcNow));
     private readonly IAwsIoTCredentialProvider _credentials = Substitute.For<IAwsIoTCredentialProvider>();
-    private readonly AwsJobsMetrics _metrics = new(new TestMeterFactory());
+    private readonly IoTAwsJobsMetrics _metrics = new(new TestMeterFactory());
 
     public AwsIoTJobsCommandDispatcherTests() => _credentials.IsReady.Returns(true);
 

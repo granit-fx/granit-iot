@@ -15,6 +15,7 @@ namespace Granit.IoT.Mqtt.Mqttnet;
 [DependsOn(typeof(GranitVaultModule))]
 public sealed class GranitIoTMqttMqttnetModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

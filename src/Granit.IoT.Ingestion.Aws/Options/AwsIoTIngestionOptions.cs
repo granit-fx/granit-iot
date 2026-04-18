@@ -14,13 +14,13 @@ public sealed class AwsIoTIngestionOptions
     public const string SectionName = "IoT:Ingestion:Aws";
 
     /// <summary>SNS → HTTP subscription path options.</summary>
-    public SnsIngestionOptions Sns { get; set; } = new();
+    public AwsIoTSnsIngestionOptions Sns { get; set; } = new();
 
     /// <summary>Direct HTTP path options (Bearer API key or SigV4).</summary>
-    public DirectIngestionOptions Direct { get; set; } = new();
+    public AwsIoTDirectIngestionOptions Direct { get; set; } = new();
 
     /// <summary>API Gateway HTTP path options (SigV4).</summary>
-    public ApiGatewayIngestionOptions ApiGateway { get; set; } = new();
+    public AwsIoTApiGatewayIngestionOptions ApiGateway { get; set; } = new();
 
     /// <summary>
     /// How long to cache a derived SigV4 signing key (HMAC chain over secret
@@ -36,7 +36,7 @@ public sealed class AwsIoTIngestionOptions
 /// SNS subscription ingestion path. Messages arrive as SNS envelopes signed by
 /// AWS CDN-hosted RSA certificates.
 /// </summary>
-public sealed class SnsIngestionOptions
+public sealed class AwsIoTSnsIngestionOptions
 {
     /// <summary>Whether the SNS path accepts inbound requests.</summary>
     public bool Enabled { get; set; }
@@ -78,7 +78,7 @@ public sealed class SnsIngestionOptions
 /// Direct HTTP ingestion path. IoT Rules post to the application endpoint with
 /// either a Bearer API key (non-Production) or SigV4 (Production).
 /// </summary>
-public sealed class DirectIngestionOptions
+public sealed class AwsIoTDirectIngestionOptions
 {
     /// <summary>Whether the direct path accepts inbound requests.</summary>
     public bool Enabled { get; set; }
@@ -101,7 +101,7 @@ public sealed class DirectIngestionOptions
 }
 
 /// <summary>API Gateway HTTP ingestion path. SigV4 only.</summary>
-public sealed class ApiGatewayIngestionOptions
+public sealed class AwsIoTApiGatewayIngestionOptions
 {
     /// <summary>Whether the API Gateway path accepts inbound requests.</summary>
     public bool Enabled { get; set; }

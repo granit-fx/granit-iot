@@ -9,6 +9,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Granit.IoT.Aws.Shadow.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the AWS Device Shadow satellite
+/// (<c>Granit.IoT.Aws.Shadow</c>).
+/// </summary>
 public static class AwsShadowServiceCollectionExtensions
 {
     /// <summary>
@@ -24,10 +28,11 @@ public static class AwsShadowServiceCollectionExtensions
 
         services.AddOptions<AwsShadowOptions>()
             .BindConfiguration(AwsShadowOptions.SectionName)
-            .ValidateDataAnnotations();
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddSingleton<AwsShadowMetrics>();
+        services.TryAddSingleton<IoTAwsShadowMetrics>();
         services.TryAddScoped<IDeviceShadowSyncService, DefaultDeviceShadowSyncService>();
 
         // Default IoT Data plane client uses the application credential chain.

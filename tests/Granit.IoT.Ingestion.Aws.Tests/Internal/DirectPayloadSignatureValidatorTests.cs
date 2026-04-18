@@ -159,7 +159,7 @@ public class DirectPayloadSignatureValidatorTests
                 Substitute.For<IOptionsMonitor<AwsIoTIngestionOptions>>();
             optionsMonitor.CurrentValue.Returns(new AwsIoTIngestionOptions
             {
-                Direct = new DirectIngestionOptions
+                Direct = new AwsIoTDirectIngestionOptions
                 {
                     Enabled = enabled,
                     Region = "eu-west-1",
@@ -168,12 +168,12 @@ public class DirectPayloadSignatureValidatorTests
                 },
             });
 
-            Metrics = new AwsIoTIngestionMetrics();
+            Metrics = new IoTIngestionAwsMetrics(new TestMeterFactory());
             Validator = new DirectPayloadSignatureValidator(SigV4, optionsMonitor, Metrics);
         }
 
         public ISigV4RequestValidator SigV4 { get; }
-        public AwsIoTIngestionMetrics Metrics { get; }
+        public IoTIngestionAwsMetrics Metrics { get; }
         public DirectPayloadSignatureValidator Validator { get; }
     }
 }

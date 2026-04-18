@@ -10,6 +10,10 @@ namespace Granit.IoT.BackgroundJobs.Handlers;
 /// </summary>
 public static class TelemetryRecoveredHandler
 {
+    /// <summary>
+    /// Handles <see cref="TelemetryIngestedEto"/> — forgets the device from
+    /// the offline tracker so the next missed heartbeat can raise a fresh alert.
+    /// </summary>
     public static Task HandleAsync(
         TelemetryIngestedEto eto,
         DeviceOfflineTrackerCache tracker,

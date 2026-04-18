@@ -59,7 +59,7 @@ internal static class DevicesEndpoints
         return group;
     }
 
-    private static async Task<Ok<IReadOnlyList<DeviceResponse>>> ListDevicesAsync(
+    internal static async Task<Ok<IReadOnlyList<DeviceResponse>>> ListDevicesAsync(
         [FromServices] IDeviceReader reader,
         DeviceStatus? status,
         int page = 1,
@@ -74,7 +74,7 @@ internal static class DevicesEndpoints
             devices.Select(ToResponse).ToList());
     }
 
-    private static async Task<Results<Ok<DeviceResponse>, NotFound>> GetDeviceByIdAsync(
+    internal static async Task<Results<Ok<DeviceResponse>, NotFound>> GetDeviceByIdAsync(
         Guid id,
         [FromServices] IDeviceReader reader,
         CancellationToken cancellationToken = default)
@@ -88,7 +88,7 @@ internal static class DevicesEndpoints
         return TypedResults.Ok(ToResponse(device));
     }
 
-    private static async Task<Results<Created<DeviceResponse>, ProblemHttpResult>> ProvisionDeviceAsync(
+    internal static async Task<Results<Created<DeviceResponse>, ProblemHttpResult>> ProvisionDeviceAsync(
         DeviceProvisionRequest request,
         [FromServices] IDeviceReader reader,
         [FromServices] IDeviceWriter writer,
@@ -117,7 +117,7 @@ internal static class DevicesEndpoints
         return TypedResults.Created($"/iot/devices/{device.Id}", response);
     }
 
-    private static async Task<Results<Ok<DeviceResponse>, NotFound>> UpdateDeviceAsync(
+    internal static async Task<Results<Ok<DeviceResponse>, NotFound>> UpdateDeviceAsync(
         Guid id,
         DeviceUpdateRequest request,
         [FromServices] IDeviceReader reader,
@@ -144,7 +144,7 @@ internal static class DevicesEndpoints
         return TypedResults.Ok(ToResponse(device));
     }
 
-    private static async Task<Results<NoContent, NotFound, ProblemHttpResult>> DecommissionDeviceAsync(
+    internal static async Task<Results<NoContent, NotFound, ProblemHttpResult>> DecommissionDeviceAsync(
         Guid id,
         [FromServices] IDeviceReader reader,
         [FromServices] IDeviceWriter writer,

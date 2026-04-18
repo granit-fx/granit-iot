@@ -80,19 +80,19 @@ public class ApiGatewayPayloadSignatureValidatorTests
                 Substitute.For<IOptionsMonitor<AwsIoTIngestionOptions>>();
             optionsMonitor.CurrentValue.Returns(new AwsIoTIngestionOptions
             {
-                ApiGateway = new ApiGatewayIngestionOptions
+                ApiGateway = new AwsIoTApiGatewayIngestionOptions
                 {
                     Enabled = enabled,
                     Region = "eu-west-1",
                 },
             });
 
-            Metrics = new AwsIoTIngestionMetrics();
+            Metrics = new IoTIngestionAwsMetrics(new TestMeterFactory());
             Validator = new ApiGatewayPayloadSignatureValidator(SigV4, optionsMonitor, Metrics);
         }
 
         public ISigV4RequestValidator SigV4 { get; }
-        public AwsIoTIngestionMetrics Metrics { get; }
+        public IoTIngestionAwsMetrics Metrics { get; }
         public ApiGatewayPayloadSignatureValidator Validator { get; }
     }
 }

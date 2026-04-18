@@ -7,16 +7,18 @@ namespace Granit.IoT.Ingestion.Aws.Diagnostics;
 /// own set of counters so dashboards can isolate an SNS regression from a
 /// SigV4 clock-skew spike on the Direct path.
 /// </summary>
-public sealed class AwsIoTIngestionMetrics : IDisposable
+public sealed class IoTIngestionAwsMetrics : IDisposable
 {
     /// <summary>Meter name used by OpenTelemetry exporters.</summary>
     public const string MeterName = "Granit.IoT.Ingestion.Aws";
 
     private readonly Meter _meter;
 
-    public AwsIoTIngestionMetrics()
+    /// <summary>Initializes the AWS ingestion counters on the shared meter.</summary>
+    public IoTIngestionAwsMetrics(IMeterFactory meterFactory)
     {
-        _meter = new Meter(MeterName);
+        ArgumentNullException.ThrowIfNull(meterFactory);
+        _meter = meterFactory.Create(MeterName);
         SnsAccepted = _meter.CreateCounter<long>(
             "granit.iot.aws.ingestion.sns.accepted",
             description: "SNS inbound messages accepted (signature valid, not a replay).");
@@ -67,5 +69,6 @@ public sealed class AwsIoTIngestionMetrics : IDisposable
     /// <summary>Counter: SigV4 signing-key derivations (cache misses).</summary>
     public Counter<long> SigV4KeyDerivations { get; }
 
+    /// <inheritdoc/>
     public void Dispose() => _meter.Dispose();
 }

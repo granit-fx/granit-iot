@@ -17,6 +17,7 @@ namespace Granit.IoT.Mqtt;
 [DependsOn(typeof(GranitSettingsModule))]
 public sealed class GranitIoTMqttModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

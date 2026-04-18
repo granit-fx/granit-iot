@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text;
 using Granit.IoT.Abstractions;
 using Granit.IoT.Domain;
 using Granit.IoT.Mcp.Responses;
@@ -17,6 +18,7 @@ namespace Granit.IoT.Mcp.Tools;
 [McpTenantScope(RequireTenant = true)]
 public static class DeviceMcpTools
 {
+    /// <summary>Lists IoT devices for the current tenant with an optional status filter and pagination.</summary>
     [McpServerTool(Name = "iot_list_devices")]
     [Description(
         "Lists IoT devices for the current tenant. Optional filter by status: " +
@@ -46,6 +48,7 @@ public static class DeviceMcpTools
         return devices.Select(ToResponse).ToArray();
     }
 
+    /// <summary>Returns a single IoT device by id, or <c>null</c> if not found in the current tenant.</summary>
     [McpServerTool(Name = "iot_get_device")]
     [Description(
         "Returns a single IoT device by its ID, or null if not found or not in the " +
@@ -75,12 +78,61 @@ public static class DeviceMcpTools
             : null;
     }
 
+    /// <summary>Maximum label length surfaced to AI agents.</summary>
+    internal const int MaxLabelLength = 128;
+
     private static DeviceMcpResponse ToResponse(Device device) => new(
         Id: device.Id,
         SerialNumber: device.SerialNumber.Value,
         Status: device.Status.ToString(),
         Model: device.Model.Value,
         Firmware: device.Firmware.Value,
-        Label: device.Label,
+        Label: SanitizeLabel(device.Label),
         LastSeenAt: device.LastHeartbeatAt);
+
+    /// <summary>
+    /// Device labels are tenant-supplied free text. Returning them raw to an
+    /// AI agent is a prompt-injection vector — a crafted label can carry
+    /// instructions the LLM will follow. Strip control and unprintable code
+    /// points, collapse whitespace, and cap the length.
+    /// </summary>
+    internal static string? SanitizeLabel(string? label)
+    {
+        if (string.IsNullOrEmpty(label))
+        {
+            return label;
+        }
+
+        StringBuilder sb = new(capacity: Math.Min(label.Length, MaxLabelLength));
+        bool prevWasSpace = false;
+        foreach (char c in label)
+        {
+            if (sb.Length >= MaxLabelLength)
+            {
+                break;
+            }
+
+            if (char.IsControl(c) || c == '\u200B' || c == '\uFEFF')
+            {
+                continue;
+            }
+
+            if (char.IsWhiteSpace(c))
+            {
+                if (prevWasSpace)
+                {
+                    continue;
+                }
+
+                sb.Append(' ');
+                prevWasSpace = true;
+                continue;
+            }
+
+            sb.Append(c);
+            prevWasSpace = false;
+        }
+
+        return sb.ToString().Trim();
+    }
 }

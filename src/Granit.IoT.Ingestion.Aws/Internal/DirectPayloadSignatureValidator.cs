@@ -17,7 +17,7 @@ namespace Granit.IoT.Ingestion.Aws.Internal;
 internal sealed class DirectPayloadSignatureValidator(
     ISigV4RequestValidator sigV4Validator,
     IOptionsMonitor<AwsIoTIngestionOptions> options,
-    AwsIoTIngestionMetrics metrics)
+    IoTIngestionAwsMetrics metrics)
     : IPayloadSignatureValidator
 {
     private const string BearerScheme = "Bearer ";
@@ -31,7 +31,7 @@ internal sealed class DirectPayloadSignatureValidator(
     {
         ArgumentNullException.ThrowIfNull(headers);
 
-        DirectIngestionOptions current = options.CurrentValue.Direct;
+        AwsIoTDirectIngestionOptions current = options.CurrentValue.Direct;
         if (!current.Enabled)
         {
             return Reject("AWS IoT direct ingestion path is disabled.");

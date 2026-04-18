@@ -11,14 +11,14 @@ namespace Granit.IoT.Aws.Shadow.Internal;
 
 internal sealed class DefaultDeviceShadowSyncService(
     IAmazonIotData iotData,
-    AwsShadowMetrics metrics,
+    IoTAwsShadowMetrics metrics,
     ILogger<DefaultDeviceShadowSyncService> logger)
     : IDeviceShadowSyncService
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     private readonly IAmazonIotData _iotData = iotData;
-    private readonly AwsShadowMetrics _metrics = metrics;
+    private readonly IoTAwsShadowMetrics _metrics = metrics;
     private readonly ILogger<DefaultDeviceShadowSyncService> _logger = logger;
 
     public async Task PushReportedAsync(

@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Granit.IoT.Ingestion.Endpoints.Extensions;
 
+/// <summary>
+/// Endpoint route-builder extensions for the telemetry ingestion webhook
+/// endpoint (<c>POST /iot/ingest/{source}</c>).
+/// </summary>
 public static class IoTIngestionEndpointRouteBuilderExtensions
 {
     /// <summary>

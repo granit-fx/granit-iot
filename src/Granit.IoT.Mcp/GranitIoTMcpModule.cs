@@ -14,6 +14,7 @@ namespace Granit.IoT.Mcp;
 [DependsOn(typeof(GranitMcpServerModule))]
 public sealed class GranitIoTMcpModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

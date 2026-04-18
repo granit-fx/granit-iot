@@ -16,6 +16,11 @@ namespace Granit.IoT.EntityFrameworkCore.Postgres.Extensions;
 /// </remarks>
 public static class IoTPostgresModelBuilderExtensions
 {
+    /// <summary>
+    /// Applies PostgreSQL column-type tweaks (<c>jsonb</c> for <c>Metrics</c>
+    /// and <c>Tags</c>) to the IoT model.
+    /// </summary>
+    /// <returns>The same <see cref="ModelBuilder"/>, for chaining.</returns>
     public static ModelBuilder ApplyIoTPostgresOptimizations(this ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TelemetryPoint>(builder =>

@@ -12,6 +12,10 @@ using Microsoft.Extensions.Options;
 
 namespace Granit.IoT.Aws.Provisioning.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the AWS provisioning satellite
+/// (<c>Granit.IoT.Aws.Provisioning</c>).
+/// </summary>
 public static class AwsProvisioningServiceCollectionExtensions
 {
     /// <summary>
@@ -25,12 +29,13 @@ public static class AwsProvisioningServiceCollectionExtensions
 
         services.AddOptions<AwsThingProvisioningOptions>()
             .BindConfiguration(AwsThingProvisioningOptions.SectionName)
-            .ValidateDataAnnotations();
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IValidateOptions<AwsThingProvisioningOptions>, AwsThingProvisioningOptionsValidator>());
 
-        services.TryAddSingleton<AwsProvisioningMetrics>();
+        services.TryAddSingleton<IoTAwsProvisioningMetrics>();
         services.TryAddScoped<IThingProvisioningService, ThingProvisioningService>();
         services.TryAddScoped<IAwsIoTCredentialLoader, AwsSecretsManagerCredentialLoader>();
 

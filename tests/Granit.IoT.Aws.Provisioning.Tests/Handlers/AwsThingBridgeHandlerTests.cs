@@ -24,13 +24,13 @@ public sealed class AwsThingBridgeHandlerTests
     private readonly IDeviceReader _devices = Substitute.For<IDeviceReader>();
     private readonly IThingProvisioningService _provisioning = Substitute.For<IThingProvisioningService>();
     private readonly IGuidGenerator _guidGenerator = Substitute.For<IGuidGenerator>();
-    private readonly AwsProvisioningMetrics _metrics;
+    private readonly IoTAwsProvisioningMetrics _metrics;
 
     public AwsThingBridgeHandlerTests()
     {
         IMeterFactory meterFactory = Substitute.For<IMeterFactory>();
         meterFactory.Create(Arg.Any<MeterOptions>()).Returns(ci => new Meter(ci.Arg<MeterOptions>()));
-        _metrics = new AwsProvisioningMetrics(meterFactory);
+        _metrics = new IoTAwsProvisioningMetrics(meterFactory);
         _guidGenerator.Create().Returns(_ => Guid.NewGuid());
     }
 

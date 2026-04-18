@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Granit.IoT.EntityFrameworkCore.Postgres.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the Postgres-specific IoT runtime services.
+/// </summary>
 public static class IoTPostgresServiceCollectionExtensions
 {
     /// <summary>

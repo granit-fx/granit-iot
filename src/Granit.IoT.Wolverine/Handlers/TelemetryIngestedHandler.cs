@@ -19,6 +19,12 @@ namespace Granit.IoT.Wolverine.Handlers;
 /// </summary>
 public static partial class TelemetryIngestedHandler
 {
+    /// <summary>
+    /// Handles <see cref="TelemetryIngestedEto"/> — persists the telemetry
+    /// point, refreshes the device heartbeat, and publishes
+    /// <see cref="TelemetryThresholdExceededEto"/> per breached metric.
+    /// Transactional via Wolverine's middleware.
+    /// </summary>
     public static async Task HandleAsync(
         TelemetryIngestedEto message,
         ITelemetryWriter telemetryWriter,

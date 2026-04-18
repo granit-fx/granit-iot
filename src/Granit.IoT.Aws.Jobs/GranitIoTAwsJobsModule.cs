@@ -14,6 +14,7 @@ namespace Granit.IoT.Aws.Jobs;
 [DependsOn(typeof(GranitIoTAwsShadowModule))]
 public sealed class GranitIoTAwsJobsModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

@@ -130,7 +130,7 @@ public class SnsPayloadSignatureValidatorTests
                 Substitute.For<IOptionsMonitor<AwsIoTIngestionOptions>>();
             optionsMonitor.CurrentValue.Returns(new AwsIoTIngestionOptions
             {
-                Sns = new SnsIngestionOptions
+                Sns = new AwsIoTSnsIngestionOptions
                 {
                     Enabled = snsEnabled,
                     Region = "eu-west-1",
@@ -162,7 +162,7 @@ public class SnsPayloadSignatureValidatorTests
             IHttpClientFactory httpClientFactory = Substitute.For<IHttpClientFactory>();
             httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient());
 
-            Metrics = new AwsIoTIngestionMetrics();
+            Metrics = new IoTIngestionAwsMetrics(new TestMeterFactory());
             Validator = new SnsPayloadSignatureValidator(
                 certCache,
                 optionsMonitor,
@@ -174,7 +174,7 @@ public class SnsPayloadSignatureValidatorTests
 
         public SnsPayloadSignatureValidator Validator { get; }
 
-        public AwsIoTIngestionMetrics Metrics { get; }
+        public IoTIngestionAwsMetrics Metrics { get; }
 
         public byte[] BuildSignedNotification(
             string messageId,

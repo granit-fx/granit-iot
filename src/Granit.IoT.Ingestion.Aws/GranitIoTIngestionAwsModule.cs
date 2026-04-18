@@ -15,6 +15,7 @@ namespace Granit.IoT.Ingestion.Aws;
 [DependsOn(typeof(GranitCachingModule))]
 public sealed class GranitIoTIngestionAwsModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

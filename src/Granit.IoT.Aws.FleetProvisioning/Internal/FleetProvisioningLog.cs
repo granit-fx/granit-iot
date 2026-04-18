@@ -23,4 +23,12 @@ internal static partial class FleetProvisioningLog
     [LoggerMessage(EventId = 5205, Level = LogLevel.Warning,
         Message = "Claim certificate rotation tick failed; will retry on next interval.")]
     public static partial void RotationTickFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(EventId = 5206, Level = LogLevel.Warning,
+        Message = "Fleet provisioning verify denied for serial '{serialNumber}': device is bound to a different tenant.")]
+    public static partial void VerifyDeniedTenantMismatch(ILogger logger, string serialNumber);
+
+    [LoggerMessage(EventId = 5207, Level = LogLevel.Information,
+        Message = "Fleet provisioning verify denied for serial '{serialNumber}': rejected by IFleetProvisioningSerialPolicy.")]
+    public static partial void VerifyDeniedSerialPolicy(ILogger logger, string serialNumber);
 }

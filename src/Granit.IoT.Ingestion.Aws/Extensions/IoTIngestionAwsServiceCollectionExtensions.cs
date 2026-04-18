@@ -24,7 +24,9 @@ public static class IoTIngestionAwsServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddOptions<AwsIoTIngestionOptions>()
-            .BindConfiguration(AwsIoTIngestionOptions.SectionName);
+            .BindConfiguration(AwsIoTIngestionOptions.SectionName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
         services.TryAddEnumerable(
             ServiceDescriptor.Singleton<IValidateOptions<AwsIoTIngestionOptions>, AwsIoTIngestionOptionsValidator>());
 
@@ -36,7 +38,7 @@ public static class IoTIngestionAwsServiceCollectionExtensions
             client => client.Timeout = TimeSpan.FromSeconds(10));
 
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddSingleton<AwsIoTIngestionMetrics>();
+        services.TryAddSingleton<IoTIngestionAwsMetrics>();
         services.TryAddSingleton<ISnsSigningCertificateCache, DefaultSnsSigningCertificateCache>();
         services.AddSingleton<IPayloadSignatureValidator, SnsPayloadSignatureValidator>();
 

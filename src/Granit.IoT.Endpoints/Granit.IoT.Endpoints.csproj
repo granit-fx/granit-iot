@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Granit.IoT.Tests" />
+    <InternalsVisibleTo Include="Granit.IoT.Endpoints.Tests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 

@@ -13,6 +13,7 @@ namespace Granit.IoT.Aws.FleetProvisioning;
 [DependsOn(typeof(GranitIoTAwsModule))]
 public sealed class GranitIoTAwsFleetProvisioningModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

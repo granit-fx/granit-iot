@@ -1,6 +1,5 @@
 using Granit.IoT.Abstractions;
 using Granit.IoT.Diagnostics;
-using Granit.IoT.Notifications;
 using Granit.MultiTenancy;
 using Granit.Settings.Services;
 using Microsoft.Extensions.Logging;
@@ -27,6 +26,11 @@ public sealed partial class StaleTelemetryPurgeService(
     internal const int DefaultRetentionDays = 365;
     private static readonly TimeSpan JobDeadline = TimeSpan.FromMinutes(30);
 
+    /// <summary>
+    /// Job entry point — bucketed retention purge: groups tenants by their
+    /// effective <c>TelemetryRetentionDays</c> and issues one bulk delete
+    /// per bucket.
+    /// </summary>
     public async Task ExecuteAsync(CancellationToken jobCt)
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(jobCt);
@@ -81,7 +85,19 @@ public sealed partial class StaleTelemetryPurgeService(
             string? raw = await settings
                 .GetOrNullAsync(IoTSettingNames.TelemetryRetentionDays, ct)
                 .ConfigureAwait(false);
-            int days = int.TryParse(raw, out int parsed) ? parsed : DefaultRetentionDays;
+            int days;
+            if (int.TryParse(raw, out int parsed))
+            {
+                days = parsed;
+            }
+            else
+            {
+                // A tenant running on the 365-day default may be out of line with
+                // a stricter GDPR/contract policy. Surface the fallback each run so
+                // ops can set IoTSettingNames.TelemetryRetentionDays explicitly.
+                days = DefaultRetentionDays;
+                Log.RetentionDefaultApplied(logger, tenantId, DefaultRetentionDays);
+            }
             resolved.Add((tenantId, days));
         }
         return resolved;
@@ -92,5 +108,9 @@ public sealed partial class StaleTelemetryPurgeService(
         [LoggerMessage(Level = LogLevel.Information,
             Message = "Purged {Deleted} telemetry rows for {TenantCount} tenant(s) with retention = {Days} days.")]
         public static partial void PurgedBucket(ILogger logger, int days, int tenantCount, long deleted);
+
+        [LoggerMessage(Level = LogLevel.Warning,
+            Message = "Tenant {TenantId} has no TelemetryRetentionDays override; falling back to default {DefaultDays} days. Set the setting explicitly to avoid silently exceeding your GDPR policy.")]
+        public static partial void RetentionDefaultApplied(ILogger logger, Guid? tenantId, int defaultDays);
     }
 }
