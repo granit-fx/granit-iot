@@ -8,6 +8,15 @@ namespace Granit.IoT.Aws.FleetProvisioning.Contracts;
 /// the only required field — everything else is optional metadata that
 /// helps the deny-list decision.
 /// </summary>
+/// <param name="SerialNumber">
+/// Manufacturer-supplied serial number the device is claiming. Evaluated by
+/// <see cref="Abstractions.IFleetProvisioningSerialPolicy"/> before the Thing is created.
+/// </param>
+/// <param name="TenantId">
+/// <b>Informational only.</b> The tenant is resolved server-side from the
+/// authenticated principal (<c>ICurrentTenant</c>); a non-null value that
+/// doesn't match the principal's tenant is rejected.
+/// </param>
 public sealed record FleetProvisioningVerifyRequest(
     [property: Required(AllowEmptyStrings = false)]
     string SerialNumber,
@@ -31,6 +40,8 @@ public sealed record FleetProvisioningVerifyResponse(
 public sealed record FleetProvisioningRegisterRequest(
     [property: Required(AllowEmptyStrings = false)]
     string SerialNumber,
+    // TenantId is informational only — resolved server-side from ICurrentTenant.
+    // A non-null body value that mismatches the principal is rejected.
     Guid? TenantId,
     [property: Required(AllowEmptyStrings = false)]
     string ThingName,

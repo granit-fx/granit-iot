@@ -13,6 +13,7 @@ namespace Granit.IoT.Aws.Shadow;
 [DependsOn(typeof(GranitIoTAwsModule))]
 public sealed class GranitIoTAwsShadowModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

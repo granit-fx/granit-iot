@@ -31,7 +31,7 @@ public static partial class AwsThingBridgeHandler
         IDeviceReader devices,
         IThingProvisioningService provisioning,
         IGuidGenerator guidGenerator,
-        AwsProvisioningMetrics metrics,
+        IoTAwsProvisioningMetrics metrics,
         ILogger<AwsThingBridgeHandlerCategory> logger,
         CancellationToken cancellationToken)
     {

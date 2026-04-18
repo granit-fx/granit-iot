@@ -20,12 +20,14 @@ namespace Granit.IoT.EntityFrameworkCore.Timescale;
 [DependsOn(typeof(GranitIoTEntityFrameworkCoreModule))]
 public sealed class GranitIoTTimescaleModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
         context.Services.AddGranitIoTTimescale();
     }
 
+    /// <inheritdoc/>
     public override async Task OnApplicationInitializationAsync(ApplicationInitializationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

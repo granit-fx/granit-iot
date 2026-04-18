@@ -13,12 +13,21 @@ namespace Granit.IoT.Aws.Domain;
 /// </summary>
 public sealed partial class ThingName : SingleValueObject<string>
 {
+    /// <summary>AWS IoT maximum Thing name length (128 characters).</summary>
     public const int MaxLength = 128;
     private const int TenantPrefixLength = 33; // 't' + 32 hex chars
     private const string TenantPrefixChar = "t";
 
+    /// <inheritdoc/>
     public override required string Value { get; init; }
 
+    /// <summary>
+    /// Factory method — validates the full <c>t{tenantId:N}-{serialNumber}</c> shape.
+    /// Prefer <see cref="From(Guid, string)"/> when composing from a known tenant id
+    /// and serial number.
+    /// </summary>
+    /// <param name="value">Complete Thing name string.</param>
+    /// <exception cref="ArgumentException">Thrown when the input is null, empty, whitespace, over <see cref="MaxLength"/>, or does not match the expected shape.</exception>
     public static ThingName Create(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
@@ -58,6 +67,7 @@ public sealed partial class ThingName : SingleValueObject<string>
     /// <summary>Returns the serial number portion (everything after <c>t{guid:N}-</c>).</summary>
     public string GetSerialNumber() => Value[(TenantPrefixLength + 1)..];
 
+    /// <summary>Implicit string conversion for backward compatibility with string-typed callers (AWS SDK, ARNs).</summary>
     public static implicit operator string(ThingName name) => name.Value;
 
     [GeneratedRegex(@"^t[0-9a-f]{32}-[A-Za-z0-9][A-Za-z0-9_-]{0,94}$", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 1000)]

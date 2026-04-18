@@ -13,6 +13,7 @@ public interface IIngestionPipeline
     /// <param name="source">Provider source key matching <see cref="IInboundMessageParser.SourceName"/>.</param>
     /// <param name="body">Raw HTTP body bytes.</param>
     /// <param name="headers">Inbound request headers (case-insensitive).</param>
+    /// <param name="cancellationToken">Cancellation token tied to the request.</param>
     Task<IngestionResult> ProcessAsync(
         string source,
         ReadOnlyMemory<byte> body,

@@ -17,6 +17,7 @@ public interface IPayloadSignatureValidator
     /// </summary>
     /// <param name="body">Raw HTTP body bytes (must be the original wire bytes).</param>
     /// <param name="headers">Inbound request headers (case-insensitive).</param>
+    /// <param name="cancellationToken">Cancellation token tied to the request.</param>
     ValueTask<SignatureValidationResult> ValidateAsync(
         ReadOnlyMemory<byte> body,
         IReadOnlyDictionary<string, string> headers,

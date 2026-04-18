@@ -24,14 +24,14 @@ namespace Granit.IoT.Aws.Shadow.Internal;
 internal sealed class ShadowDeltaPollingService(
     IServiceScopeFactory scopeFactory,
     IOptions<AwsShadowOptions> options,
-    AwsShadowMetrics metrics,
+    IoTAwsShadowMetrics metrics,
     ILogger<ShadowDeltaPollingService> logger,
     TimeProvider timeProvider)
     : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
     private readonly AwsShadowOptions _options = options.Value;
-    private readonly AwsShadowMetrics _metrics = metrics;
+    private readonly IoTAwsShadowMetrics _metrics = metrics;
     private readonly ILogger<ShadowDeltaPollingService> _logger = logger;
     private readonly TimeProvider _timeProvider = timeProvider;
 
@@ -56,7 +56,7 @@ internal sealed class ShadowDeltaPollingService(
         }
     }
 
-    private async Task PollOnceAsync(CancellationToken cancellationToken)
+    internal async Task PollOnceAsync(CancellationToken cancellationToken)
     {
         await using AsyncServiceScope scope = _scopeFactory.CreateAsyncScope();
         IAwsThingBindingReader bindings = scope.ServiceProvider.GetRequiredService<IAwsThingBindingReader>();

@@ -17,6 +17,11 @@ public static partial class TelemetryThresholdNotificationHandler
 {
     private const string DeviceEntityType = "Device";
 
+    /// <summary>
+    /// Handles <see cref="TelemetryThresholdExceededEto"/> — acquires the
+    /// per-(device, metric) throttle and publishes a
+    /// <c>IoT.TelemetryThresholdAlert</c> notification when admitted.
+    /// </summary>
     public static async Task HandleAsync(
         TelemetryThresholdExceededEto message,
         IAlertThrottle throttle,

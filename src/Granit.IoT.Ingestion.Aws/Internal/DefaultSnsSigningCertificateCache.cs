@@ -13,7 +13,7 @@ namespace Granit.IoT.Ingestion.Aws.Internal;
 /// Default <see cref="ISnsSigningCertificateCache"/>. Fetches AWS SNS signing
 /// certificates via a named <see cref="HttpClient"/> (<c>AwsIoTSnsCertFetch</c>)
 /// and caches the resulting RSA public key in <see cref="IFusionCache"/> for the
-/// TTL configured by <see cref="SnsIngestionOptions.CertCacheHours"/>. The cert
+/// TTL configured by <see cref="AwsIoTSnsIngestionOptions.CertCacheHours"/>. The cert
 /// URL is validated against an AWS CDN allow-list regex before any HTTP call,
 /// blocking the cert-injection attack where an attacker-controlled SNS body
 /// points at an attacker-controlled PEM file.

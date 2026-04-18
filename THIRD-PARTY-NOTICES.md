@@ -4,7 +4,7 @@ Ce fichier répertorie les bibliothèques tierces utilisées par le projet
 **granit-iot** ainsi que leurs licences respectives. Il est mis à jour
 à chaque ajout ou modification de dépendance externe.
 
-Dernière mise à jour : 2026-04-17
+Dernière mise à jour : 2026-04-18
 
 ---
 
@@ -13,8 +13,8 @@ Dernière mise à jour : 2026-04-17
 | Licence      | Nombre de packages |
 | ------------ | ------------------ |
 | Apache-2.0   | 31                 |
-| MIT          | 6                  |
-| BSD-3-Clause | 2                  |
+| MIT          | 7                  |
+| BSD-3-Clause | 3                  |
 | PostgreSQL   | 1                  |
 
 Toutes les licences sont permissives et compatibles avec la distribution
@@ -62,10 +62,17 @@ Packages internes publiés depuis `granit-fx/granit-dotnet`.
 
 ### MIT
 
-| Package                      | Version | Copyright                 |
-| ---------------------------- | ------- | ------------------------- |
-| Microsoft.AspNetCore.OpenApi | 10.*    | (c) Microsoft Corporation |
-| WolverineFx                  | 5.31.*  | JasperFx Contributors     |
+| Package                      | Version    | Copyright                                |
+| ---------------------------- | ---------- | ---------------------------------------- |
+| Microsoft.AspNetCore.OpenApi | 10.*       | (c) Microsoft Corporation                |
+| MQTTnet                      | 5.0.1.1416 | Copyright (c) 2016-2025 The MQTTnet Team |
+| WolverineFx                  | 5.31.*     | JasperFx Contributors                    |
+
+### BSD-3-Clause (production)
+
+| Package | Version | Copyright                          |
+| ------- | ------- | ---------------------------------- |
+| Polly   | 8.5.*   | Copyright (c) 2015 App vNext, Inc. |
 
 ### PostgreSQL License
 

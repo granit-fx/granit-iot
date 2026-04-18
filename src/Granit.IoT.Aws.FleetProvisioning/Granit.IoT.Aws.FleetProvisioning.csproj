@@ -18,7 +18,10 @@
 
   <ItemGroup>
     <PackageReference Include="Granit" />
+    <PackageReference Include="Granit.Authorization" />
     <PackageReference Include="Granit.Http.ApiDocumentation" />
+    <PackageReference Include="Granit.MultiTenancy" />
+    <PackageReference Include="Granit.RateLimiting" />
     <PackageReference Include="Granit.Validation" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
   </ItemGroup>

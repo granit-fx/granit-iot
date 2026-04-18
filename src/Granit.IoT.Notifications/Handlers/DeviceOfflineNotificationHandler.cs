@@ -16,6 +16,10 @@ public static partial class DeviceOfflineNotificationHandler
 {
     private const string DeviceEntityType = "Device";
 
+    /// <summary>
+    /// Handles <see cref="DeviceOfflineDetectedEto"/> — publishes a
+    /// <c>IoT.DeviceOffline</c> notification to the device's followers.
+    /// </summary>
     public static async Task HandleAsync(
         DeviceOfflineDetectedEto message,
         INotificationPublisher publisher,

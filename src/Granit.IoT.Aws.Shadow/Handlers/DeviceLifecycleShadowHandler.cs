@@ -15,6 +15,7 @@ namespace Granit.IoT.Aws.Shadow.Handlers;
 /// </summary>
 public static class DeviceLifecycleShadowHandler
 {
+    /// <summary>Handles <see cref="DeviceActivatedEvent"/> — pushes <c>status=Active</c> to the bound Thing's reported shadow.</summary>
     public static Task HandleAsync(
         DeviceActivatedEvent message,
         IAwsThingBindingReader bindings,
@@ -24,6 +25,7 @@ public static class DeviceLifecycleShadowHandler
         CancellationToken cancellationToken) =>
         PushStatusAsync(message.DeviceId, "Active", bindings, shadow, options, clock, cancellationToken);
 
+    /// <summary>Handles <see cref="DeviceSuspendedEvent"/> — pushes <c>status=Suspended</c> to the bound Thing's reported shadow.</summary>
     public static Task HandleAsync(
         DeviceSuspendedEvent message,
         IAwsThingBindingReader bindings,
@@ -33,6 +35,7 @@ public static class DeviceLifecycleShadowHandler
         CancellationToken cancellationToken) =>
         PushStatusAsync(message.DeviceId, "Suspended", bindings, shadow, options, clock, cancellationToken);
 
+    /// <summary>Handles <see cref="DeviceReactivatedEvent"/> — pushes <c>status=Active</c> to the bound Thing's reported shadow.</summary>
     public static Task HandleAsync(
         DeviceReactivatedEvent message,
         IAwsThingBindingReader bindings,

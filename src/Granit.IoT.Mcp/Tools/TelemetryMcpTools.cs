@@ -23,6 +23,10 @@ public static class TelemetryMcpTools
     /// <summary>Default <c>maxPoints</c> when the caller omits the parameter.</summary>
     public const int DefaultMaxPoints = 100;
 
+    /// <summary>
+    /// Returns telemetry readings for the given device, metric and time window,
+    /// capped at <see cref="MaxPointsLimit"/>.
+    /// </summary>
     [McpServerTool(Name = "iot_query_telemetry")]
     [Description(
         "Returns telemetry readings for a given device, metric, and time window, " +
@@ -62,6 +66,7 @@ public static class TelemetryMcpTools
             .ToArray();
     }
 
+    /// <summary>Returns the most recent telemetry point for a device, expanded into one reading per metric.</summary>
     [McpServerTool(Name = "iot_get_latest_readings")]
     [Description(
         "Returns the most recent telemetry point for a device, expanded into one " +

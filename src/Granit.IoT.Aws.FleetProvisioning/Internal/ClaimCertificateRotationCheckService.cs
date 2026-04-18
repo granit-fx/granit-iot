@@ -21,14 +21,14 @@ namespace Granit.IoT.Aws.FleetProvisioning.Internal;
 internal sealed class ClaimCertificateRotationCheckService(
     IServiceScopeFactory scopeFactory,
     IOptions<FleetProvisioningOptions> options,
-    FleetProvisioningMetrics metrics,
+    IoTAwsFleetProvisioningMetrics metrics,
     ILogger<ClaimCertificateRotationCheckService> logger,
     TimeProvider timeProvider)
     : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
     private readonly FleetProvisioningOptions _options = options.Value;
-    private readonly FleetProvisioningMetrics _metrics = metrics;
+    private readonly IoTAwsFleetProvisioningMetrics _metrics = metrics;
     private readonly ILogger<ClaimCertificateRotationCheckService> _logger = logger;
     private readonly TimeProvider _timeProvider = timeProvider;
 
@@ -51,7 +51,7 @@ internal sealed class ClaimCertificateRotationCheckService(
         }
     }
 
-    private async Task SweepOnceAsync(CancellationToken cancellationToken)
+    internal async Task SweepOnceAsync(CancellationToken cancellationToken)
     {
         try
         {

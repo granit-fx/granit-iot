@@ -21,7 +21,7 @@ namespace Granit.IoT.Aws.Jobs.Internal;
 internal sealed class IoTJobStatusPollingService(
     IServiceScopeFactory scopeFactory,
     IOptions<AwsIoTJobsOptions> options,
-    AwsJobsMetrics metrics,
+    IoTAwsJobsMetrics metrics,
     ILogger<IoTJobStatusPollingService> logger,
     TimeProvider timeProvider)
     : BackgroundService
@@ -31,7 +31,7 @@ internal sealed class IoTJobStatusPollingService(
 
     private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
     private readonly AwsIoTJobsOptions _options = options.Value;
-    private readonly AwsJobsMetrics _metrics = metrics;
+    private readonly IoTAwsJobsMetrics _metrics = metrics;
     private readonly ILogger<IoTJobStatusPollingService> _logger = logger;
     private readonly TimeProvider _timeProvider = timeProvider;
 

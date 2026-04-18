@@ -18,7 +18,7 @@ public sealed class DefaultDeviceShadowSyncServiceTests
     private static readonly Guid Tenant = Guid.Parse("11111111-2222-3333-4444-555555555555");
 
     private readonly IAmazonIotData _iotData = Substitute.For<IAmazonIotData>();
-    private readonly AwsShadowMetrics _metrics = new(new TestMeterFactory());
+    private readonly IoTAwsShadowMetrics _metrics = new(new TestMeterFactory());
 
     [Fact]
     public async Task PushReportedAsync_SendsExpectedJsonPayload()

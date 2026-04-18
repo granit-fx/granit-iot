@@ -8,6 +8,7 @@ namespace Granit.IoT.Ingestion.Options;
 /// </summary>
 public sealed class GranitIoTIngestionOptions
 {
+    /// <summary>Configuration section name for binding via <c>BindConfiguration(SectionName)</c>.</summary>
     public const string SectionName = "IoT:Ingestion";
 
     /// <summary>

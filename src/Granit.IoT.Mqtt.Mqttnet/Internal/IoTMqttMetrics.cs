@@ -7,7 +7,7 @@ namespace Granit.IoT.Mqtt.Mqttnet.Internal;
 /// OpenTelemetry metrics emitted by the MQTTnet bridge. Separate meter (and counter
 /// names) from <c>Granit.IoT</c> so MQTT-specific dashboards don't have to filter by tag.
 /// </summary>
-internal sealed class IoTMqttBridgeMetrics
+internal sealed class IoTMqttMetrics
 {
     public const string MeterName = "Granit.IoT.Mqtt";
 
@@ -18,7 +18,7 @@ internal sealed class IoTMqttBridgeMetrics
     private readonly Counter<long> _reconnectAttempts;
     private readonly Counter<long> _certificateReloads;
 
-    public IoTMqttBridgeMetrics(IMeterFactory meterFactory)
+    public IoTMqttMetrics(IMeterFactory meterFactory)
     {
         Meter meter = meterFactory.Create(MeterName);
 

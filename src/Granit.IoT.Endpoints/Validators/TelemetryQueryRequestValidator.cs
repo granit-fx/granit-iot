@@ -18,9 +18,16 @@ internal sealed class TelemetryQueryRequestValidator : GranitValidator<Telemetry
     }
 }
 
+/// <summary>
+/// Query-string parameters accepted by the telemetry range endpoint.
+/// Validated by <see cref="TelemetryQueryRequestValidator"/>.
+/// </summary>
 public sealed record TelemetryQueryParameters
 {
+    /// <summary>Inclusive lower bound of the recorded-at range. Must be strictly before <see cref="RangeEnd"/> when both are set.</summary>
     public DateTimeOffset? RangeStart { get; init; }
+    /// <summary>Exclusive upper bound of the recorded-at range.</summary>
     public DateTimeOffset? RangeEnd { get; init; }
+    /// <summary>Maximum number of points returned; clamped to <c>[1, 10000]</c>.</summary>
     public int? MaxPoints { get; init; }
 }

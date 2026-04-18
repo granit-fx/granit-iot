@@ -33,7 +33,7 @@ internal static class FleetProvisioningEndpoints
         return group;
     }
 
-    private static async Task<Results<Ok<FleetProvisioningVerifyResponse>, ProblemHttpResult>> VerifyAsync(
+    internal static async Task<Results<Ok<FleetProvisioningVerifyResponse>, ProblemHttpResult>> VerifyAsync(
         [FromBody] FleetProvisioningVerifyRequest request,
         [FromServices] IFleetProvisioningService service,
         CancellationToken cancellationToken)
@@ -51,7 +51,7 @@ internal static class FleetProvisioningEndpoints
         return TypedResults.Ok(response);
     }
 
-    private static async Task<Results<Ok<FleetProvisioningRegisterResponse>, ProblemHttpResult>> RegisterAsync(
+    internal static async Task<Results<Ok<FleetProvisioningRegisterResponse>, ProblemHttpResult>> RegisterAsync(
         [FromBody] FleetProvisioningRegisterRequest request,
         [FromServices] IFleetProvisioningService service,
         CancellationToken cancellationToken)

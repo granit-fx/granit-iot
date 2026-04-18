@@ -141,6 +141,9 @@ internal sealed partial class IngestionPipeline(
     [LoggerMessage(EventId = 4004, Level = LogLevel.Information, Message = "Duplicate ingestion skipped for source '{Source}' (message id '{MessageId}').")]
     private static partial void LogDuplicateSkipped(ILogger logger, string source, string messageId);
 
-    [LoggerMessage(EventId = 4005, Level = LogLevel.Information, Message = "Unknown device '{DeviceExternalId}' on source '{Source}' — emitting DeviceUnknownEto.")]
+    // Serial numbers can be user-linked identifiers (badge ids, employee
+    // wearables). Emit at Debug so production log pipelines don't carry
+    // device-level PII by default; operators opt-in per tenant.
+    [LoggerMessage(EventId = 4005, Level = LogLevel.Debug, Message = "Unknown device '{DeviceExternalId}' on source '{Source}' — emitting DeviceUnknownEto.")]
     private static partial void LogUnknownDevice(ILogger logger, string source, string deviceExternalId);
 }

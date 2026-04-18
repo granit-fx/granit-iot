@@ -17,7 +17,7 @@ internal sealed class AwsIoTJobsCommandDispatcher(
     IJobTrackingStore tracking,
     IAwsIoTCredentialProvider credentials,
     IOptions<AwsIoTJobsOptions> options,
-    AwsJobsMetrics metrics,
+    IoTAwsJobsMetrics metrics,
     ILogger<AwsIoTJobsCommandDispatcher> logger)
     : IDeviceCommandDispatcher
 {
@@ -27,7 +27,7 @@ internal sealed class AwsIoTJobsCommandDispatcher(
     private readonly IJobTrackingStore _tracking = tracking;
     private readonly IAwsIoTCredentialProvider _credentials = credentials;
     private readonly AwsIoTJobsOptions _options = options.Value;
-    private readonly AwsJobsMetrics _metrics = metrics;
+    private readonly IoTAwsJobsMetrics _metrics = metrics;
     private readonly ILogger<AwsIoTJobsCommandDispatcher> _logger = logger;
 
     public string DispatcherName => "AwsIoTJobs";

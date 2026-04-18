@@ -4,8 +4,10 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <!-- Granit analyzers target production code — test projects legitimately use
-         Guid.NewGuid(), DateTimeOffset.UtcNow, and test secrets for setup/assertions. -->
-    <NoWarn>$(NoWarn);GRSEC001;GRSEC002;GRSEC003;GRSEC004;GREF001;RS0030</NoWarn>
+         Guid.NewGuid(), DateTimeOffset.UtcNow, and test secrets for setup/assertions.
+         CS1591: test methods are named self-describingly ([Fact] / [Theory]); XML docs
+         on them are noise, not value. -->
+    <NoWarn>$(NoWarn);GRSEC001;GRSEC002;GRSEC003;GRSEC004;GREF001;RS0030;CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

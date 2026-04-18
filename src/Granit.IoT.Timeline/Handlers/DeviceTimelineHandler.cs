@@ -9,14 +9,15 @@ namespace Granit.IoT.Timeline.Handlers;
 /// <summary>
 /// Wolverine handlers that write a <see cref="TimelineEntryType.SystemLog"/>
 /// entry per device-lifecycle domain event. Entry type is "Device" with the
-/// device <see cref="Granit.IoT.Domain.Device.Id"/> as entity id, so the
-/// existing <c>GET /api/granit/timeline/Device/{id}</c> endpoint surfaces
-/// the full chronological audit trail.
+/// device id as entity id, so the existing
+/// <c>GET /api/granit/timeline/Device/{id}</c> endpoint surfaces the full
+/// chronological audit trail.
 /// </summary>
 public static partial class DeviceTimelineHandler
 {
     private const string EntityType = "Device";
 
+    /// <summary>Handles <see cref="DeviceProvisionedEvent"/> — writes a "provisioned" timeline entry for the device.</summary>
     public static Task HandleAsync(
         DeviceProvisionedEvent e,
         ITimelineWriter writer,
@@ -33,6 +34,7 @@ public static partial class DeviceTimelineHandler
             cancellationToken: cancellationToken);
     }
 
+    /// <summary>Handles <see cref="DeviceActivatedEvent"/> — writes an "activated" timeline entry for the device.</summary>
     public static Task HandleAsync(
         DeviceActivatedEvent e,
         ITimelineWriter writer,
@@ -49,6 +51,7 @@ public static partial class DeviceTimelineHandler
             cancellationToken: cancellationToken);
     }
 
+    /// <summary>Handles <see cref="DeviceSuspendedEvent"/> — writes a "suspended" timeline entry with the supplied reason.</summary>
     public static Task HandleAsync(
         DeviceSuspendedEvent e,
         ITimelineWriter writer,
@@ -65,6 +68,7 @@ public static partial class DeviceTimelineHandler
             cancellationToken: cancellationToken);
     }
 
+    /// <summary>Handles <see cref="DeviceReactivatedEvent"/> — writes a "reactivated" timeline entry for the device.</summary>
     public static Task HandleAsync(
         DeviceReactivatedEvent e,
         ITimelineWriter writer,
@@ -81,6 +85,7 @@ public static partial class DeviceTimelineHandler
             cancellationToken: cancellationToken);
     }
 
+    /// <summary>Handles <see cref="DeviceDecommissionedEvent"/> — writes a "decommissioned" timeline entry for the device.</summary>
     public static Task HandleAsync(
         DeviceDecommissionedEvent e,
         ITimelineWriter writer,

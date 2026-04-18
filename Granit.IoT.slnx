@@ -29,6 +29,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Granit.IoT.Tests/Granit.IoT.Tests.csproj" />
+    <Project Path="tests/Granit.IoT.Endpoints.Tests/Granit.IoT.Endpoints.Tests.csproj" />
     <Project Path="tests/Granit.IoT.EntityFrameworkCore.Tests/Granit.IoT.EntityFrameworkCore.Tests.csproj" />
     <Project Path="tests/Granit.IoT.ArchitectureTests/Granit.IoT.ArchitectureTests.csproj" />
     <Project Path="tests/Granit.IoT.Ingestion.Tests/Granit.IoT.Ingestion.Tests.csproj" />

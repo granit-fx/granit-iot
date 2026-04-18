@@ -7,6 +7,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Granit.IoT.Aws.EntityFrameworkCore.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the AWS bridge persistence layer
+/// (<c>Granit.IoT.Aws.EntityFrameworkCore</c>).
+/// </summary>
 public static class AwsBindingServiceCollectionExtensions
 {
     /// <summary>

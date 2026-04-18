@@ -2,7 +2,7 @@ using Granit.BackgroundJobs;
 using Granit.IoT.Abstractions;
 using Granit.IoT.BackgroundJobs.Internal;
 using Granit.IoT.BackgroundJobs.Services;
-using Granit.IoT.Notifications;
+using Granit.IoT.Wolverine;
 using Granit.Modularity;
 using Granit.Settings;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,12 +16,13 @@ namespace Granit.IoT.BackgroundJobs;
 /// implementation is wired. The Postgres provider replaces the no-op via
 /// <c>AddGranitIoTPostgres()</c>.
 /// </summary>
-[DependsOn(typeof(GranitIoTModule))]
 [DependsOn(typeof(GranitBackgroundJobsModule))]
+[DependsOn(typeof(GranitIoTModule))]
+[DependsOn(typeof(GranitIoTWolverineModule))]
 [DependsOn(typeof(GranitSettingsModule))]
-[DependsOn(typeof(GranitIoTNotificationsModule))]
 public sealed class GranitIoTBackgroundJobsModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

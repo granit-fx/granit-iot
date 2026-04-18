@@ -25,6 +25,8 @@ internal static class IngestionEndpoints
             .Produces(StatusCodes.Status202Accepted)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status413PayloadTooLarge)
             .ProducesProblem(StatusCodes.Status415UnsupportedMediaType)
             .ProducesProblem(StatusCodes.Status422UnprocessableEntity)
             .ProducesProblem(StatusCodes.Status429TooManyRequests);
@@ -32,7 +34,7 @@ internal static class IngestionEndpoints
         return group;
     }
 
-    private static async Task<IResult> IngestAsync(
+    internal static async Task<IResult> IngestAsync(
         string source,
         HttpRequest request,
         [FromServices] IIngestionPipeline pipeline,
@@ -45,10 +47,45 @@ internal static class IngestionEndpoints
                 statusCode: StatusCodes.Status415UnsupportedMediaType);
         }
 
+        // Fast path: if the client advertised a Content-Length larger than the
+        // cap, reject before buffering a single byte. For chunked requests
+        // Content-Length is null and the hard cap below still applies.
+        if (request.ContentLength is long cl && cl > MaxBodySizeBytes)
+        {
+            return TypedResults.Problem(
+                detail: $"Request body exceeds the {MaxBodySizeBytes:N0}-byte cap.",
+                statusCode: StatusCodes.Status413PayloadTooLarge);
+        }
+
         request.EnableBuffering(bufferThreshold: MaxBodySizeBytes, bufferLimit: MaxBodySizeBytes);
 
         using MemoryStream memory = new();
-        await request.Body.CopyToAsync(memory, cancellationToken).ConfigureAwait(false);
+        // CopyToAsync with a bounded destination prevents unbounded allocation
+        // from a chunked-encoded attacker payload. Read at most MaxBodySizeBytes
+        // + 1 and reject if we exceeded the cap.
+        byte[] buffer = new byte[8 * 1024];
+        int totalRead = 0;
+        while (true)
+        {
+            int read = await request.Body
+                .ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)
+                .ConfigureAwait(false);
+            if (read == 0)
+            {
+                break;
+            }
+
+            totalRead += read;
+            if (totalRead > MaxBodySizeBytes)
+            {
+                return TypedResults.Problem(
+                    detail: $"Request body exceeds the {MaxBodySizeBytes:N0}-byte cap.",
+                    statusCode: StatusCodes.Status413PayloadTooLarge);
+            }
+
+            await memory.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
+        }
+
         ReadOnlyMemory<byte> body = memory.ToArray();
 
         Dictionary<string, string> headers = SnapshotHeaders(request.Headers);

@@ -15,6 +15,7 @@ namespace Granit.IoT.Timeline;
 [DependsOn(typeof(GranitTimelineModule))]
 public sealed class GranitIoTTimelineModule : GranitModule
 {
+    /// <inheritdoc/>
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         ArgumentNullException.ThrowIfNull(context);

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Granit.IoT\Granit.IoT.csproj" />
-    <ProjectReference Include="..\Granit.IoT.Notifications\Granit.IoT.Notifications.csproj" />
     <ProjectReference Include="..\Granit.IoT.Wolverine\Granit.IoT.Wolverine.csproj" />
   </ItemGroup>
 

@@ -15,7 +15,7 @@ namespace Granit.IoT.Ingestion.Aws.Internal;
 internal sealed class ApiGatewayPayloadSignatureValidator(
     ISigV4RequestValidator sigV4Validator,
     IOptionsMonitor<AwsIoTIngestionOptions> options,
-    AwsIoTIngestionMetrics metrics)
+    IoTIngestionAwsMetrics metrics)
     : IPayloadSignatureValidator
 {
     public string SourceName => AwsIoTIngestionConstants.ApiGatewaySourceName;

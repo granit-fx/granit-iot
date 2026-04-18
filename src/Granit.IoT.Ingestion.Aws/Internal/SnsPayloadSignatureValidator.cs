@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Granit.IoT.Ingestion.Abstractions;
 using Granit.IoT.Ingestion.Aws.Diagnostics;
 using Granit.IoT.Ingestion.Aws.Options;
@@ -22,7 +23,7 @@ internal sealed partial class SnsPayloadSignatureValidator(
     IOptionsMonitor<AwsIoTIngestionOptions> options,
     IFusionCache dedupCache,
     IHttpClientFactory httpClientFactory,
-    AwsIoTIngestionMetrics metrics,
+    IoTIngestionAwsMetrics metrics,
     ILogger<SnsPayloadSignatureValidator> logger)
     : IPayloadSignatureValidator
 {
@@ -52,7 +53,7 @@ internal sealed partial class SnsPayloadSignatureValidator(
             return Reject("SNS envelope is missing required fields.");
         }
 
-        SnsIngestionOptions snsOptions = options.CurrentValue.Sns;
+        AwsIoTSnsIngestionOptions snsOptions = options.CurrentValue.Sns;
         if (!snsOptions.Enabled)
         {
             return Reject("SNS ingestion path is disabled.");
@@ -137,20 +138,46 @@ internal sealed partial class SnsPayloadSignatureValidator(
             return true;
         }
 
-        // At-most-once dedup under concurrent delivery is not the goal — an SNS
-        // topic rarely redelivers within a few-millisecond window, and a false
-        // negative just means one duplicate rides through.
-        await dedupCache.SetAsync<byte>(
-            key,
-            1,
-            options: new FusionCacheEntryOptions(TimeSpan.FromMinutes(windowMinutes)),
-            token: cancellationToken).ConfigureAwait(false);
-        return false;
+        // The TryGet/Set pair leaves a microsecond-scale TOCTOU window during
+        // which two concurrent deliveries of the same SNS MessageId can both
+        // pass the replay check. The serialization lock below closes the
+        // race for same-process callers; across processes the broker's own
+        // at-least-once delivery SLA is the remaining boundary, bounded by
+        // windowMinutes.
+        SemaphoreSlim gate = _dedupGates.GetOrAdd(key, static _ => new SemaphoreSlim(1, 1));
+        await gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            existing = await dedupCache
+                .TryGetAsync<byte>(key, token: cancellationToken)
+                .ConfigureAwait(false);
+            if (existing.HasValue)
+            {
+                return true;
+            }
+
+            await dedupCache.SetAsync<byte>(
+                key,
+                1,
+                options: new FusionCacheEntryOptions(TimeSpan.FromMinutes(windowMinutes)),
+                token: cancellationToken).ConfigureAwait(false);
+            return false;
+        }
+        finally
+        {
+            gate.Release();
+            // Drop the lock entry after the TTL has passed so the dictionary
+            // doesn't grow unbounded — `TryRemove` is cheap and the race of
+            // another arrival during drop just creates a new semaphore.
+            _dedupGates.TryRemove(new KeyValuePair<string, SemaphoreSlim>(key, gate));
+        }
     }
+
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, SemaphoreSlim> _dedupGates = new();
 
     private async Task HandleSubscriptionConfirmationAsync(
         SnsEnvelope envelope,
-        SnsIngestionOptions snsOptions,
+        AwsIoTSnsIngestionOptions snsOptions,
         CancellationToken cancellationToken)
     {
         if (!snsOptions.AutoConfirmSubscription)
@@ -162,6 +189,16 @@ internal sealed partial class SnsPayloadSignatureValidator(
         if (string.IsNullOrEmpty(envelope.SubscribeUrl))
         {
             LogManualConfirmationRequired(logger, envelope.TopicArn!, "<missing>");
+            return;
+        }
+
+        // Pin the SubscribeURL to the AWS SNS CDN. SNS never signs the
+        // SubscribeURL itself — a forged envelope that passes RSA verification
+        // could still point at an attacker-controlled host. Matching the same
+        // allow-list used for the signing certificate closes the SSRF window.
+        if (!SubscribeUrlPattern().IsMatch(envelope.SubscribeUrl))
+        {
+            LogSubscribeUrlRejected(logger, envelope.TopicArn!, envelope.SubscribeUrl);
             return;
         }
 
@@ -192,7 +229,7 @@ internal sealed partial class SnsPayloadSignatureValidator(
     {
         try
         {
-            return JsonSerializer.Deserialize<SnsEnvelope>(body.Span);
+            return JsonSerializer.Deserialize<SnsEnvelope>(body.Span, IngestionJsonOptions.Default);
         }
         catch (JsonException)
         {
@@ -217,4 +254,16 @@ internal sealed partial class SnsPayloadSignatureValidator(
         Level = LogLevel.Warning,
         Message = "Failed to GET SNS SubscribeURL for topic {TopicArn}; AWS will retry the confirmation.")]
     private static partial void LogSubscriptionConfirmationFailed(ILogger logger, string topicArn, Exception exception);
+
+    [LoggerMessage(
+        EventId = 4,
+        Level = LogLevel.Warning,
+        Message = "Refusing to auto-confirm SNS subscription for topic {TopicArn}: SubscribeURL '{SubscribeUrl}' is not on the AWS SNS CDN allow-list.")]
+    private static partial void LogSubscribeUrlRejected(ILogger logger, string topicArn, string subscribeUrl);
+
+    [GeneratedRegex(
+        @"^https://sns\.[a-z0-9\-]+\.amazonaws\.com/\?Action=ConfirmSubscription(&.+)?$",
+        RegexOptions.CultureInvariant,
+        matchTimeoutMilliseconds: 1000)]
+    private static partial Regex SubscribeUrlPattern();
 }

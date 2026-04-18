@@ -1,8 +1,9 @@
-namespace Granit.IoT.Notifications;
+namespace Granit.IoT;
 
 /// <summary>
 /// Setting keys consumed by the IoT module family. Auto-discovered by
-/// <c>Granit.Settings</c> via <see cref="Internal.IoTSettingDefinitionProvider"/>.
+/// <c>Granit.Settings</c> via the
+/// <c>Granit.IoT.Notifications.Internal.IoTSettingDefinitionProvider</c>.
 /// </summary>
 public static class IoTSettingNames
 {

@@ -57,7 +57,7 @@ internal sealed class AwsIoTSnsPayloadParser : IInboundMessageParser
     {
         try
         {
-            return JsonSerializer.Deserialize<SnsEnvelope>(body);
+            return JsonSerializer.Deserialize<SnsEnvelope>(body, IngestionJsonOptions.Default);
         }
         catch (JsonException)
         {

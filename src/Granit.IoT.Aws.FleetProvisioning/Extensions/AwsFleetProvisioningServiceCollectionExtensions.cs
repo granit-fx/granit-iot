@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Granit.IoT.Aws.FleetProvisioning.Extensions;
 
+/// <summary>
+/// Service-collection extensions for the AWS Fleet Provisioning (JITP) satellite.
+/// </summary>
 public static class AwsFleetProvisioningServiceCollectionExtensions
 {
     /// <summary>
@@ -21,10 +24,12 @@ public static class AwsFleetProvisioningServiceCollectionExtensions
 
         services.AddOptions<FleetProvisioningOptions>()
             .BindConfiguration(FleetProvisioningOptions.SectionName)
-            .ValidateDataAnnotations();
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddSingleton<FleetProvisioningMetrics>();
+        services.TryAddSingleton<IoTAwsFleetProvisioningMetrics>();
+        services.TryAddSingleton<IFleetProvisioningSerialPolicy, AllowAllSerialPolicy>();
         services.TryAddScoped<IFleetProvisioningService, FleetProvisioningService>();
         services.AddHostedService<ClaimCertificateRotationCheckService>();
 

@@ -20,6 +20,11 @@ public sealed partial class TelemetryPartitionMaintenanceService(
 {
     internal static readonly int[] MonthsAhead = [1, 2];
 
+    /// <summary>
+    /// Job entry point — ensures the next two monthly partitions of
+    /// <c>iot_telemetry_points</c> exist. No-ops when the parent table is
+    /// not partitioned.
+    /// </summary>
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         bool partitioned = await maintainer

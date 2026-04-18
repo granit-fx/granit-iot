@@ -38,6 +38,7 @@ public interface ISigV4RequestValidator
     /// <c>SignedHeaders</c> component of the <c>Authorization</c> header.
     /// </param>
     /// <param name="body">Raw request body bytes.</param>
+    /// <param name="cancellationToken">Cancellation token tied to the request.</param>
     ValueTask<SignatureValidationResult> ValidateAsync(
         string method,
         string canonicalUri,

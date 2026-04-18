@@ -3,10 +3,12 @@ using Granit.Guids;
 using Granit.IoT.Abstractions;
 using Granit.IoT.Aws.Abstractions;
 using Granit.IoT.Aws.Domain;
+using Granit.IoT.Aws.FleetProvisioning.Abstractions;
 using Granit.IoT.Aws.FleetProvisioning.Contracts;
 using Granit.IoT.Aws.FleetProvisioning.Diagnostics;
 using Granit.IoT.Aws.FleetProvisioning.Internal;
 using Granit.IoT.Domain;
+using Granit.MultiTenancy;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Shouldly;
@@ -22,11 +24,22 @@ public sealed class FleetProvisioningServiceTests
     private readonly IAwsThingBindingReader _bindingReader = Substitute.For<IAwsThingBindingReader>();
     private readonly IAwsThingBindingWriter _bindingWriter = Substitute.For<IAwsThingBindingWriter>();
     private readonly IGuidGenerator _guidGenerator = Substitute.For<IGuidGenerator>();
-    private readonly FleetProvisioningMetrics _metrics = new(new TestMeterFactory());
+    private readonly ICurrentTenant _currentTenant = Substitute.For<ICurrentTenant>();
+    private readonly IFleetProvisioningSerialPolicy _serialPolicy = Substitute.For<IFleetProvisioningSerialPolicy>();
+    private readonly IoTAwsFleetProvisioningMetrics _metrics = new(new TestMeterFactory());
 
     public FleetProvisioningServiceTests()
     {
         _guidGenerator.Create().Returns(_ => Guid.NewGuid());
+        _currentTenant.Id.Returns(Tenant);
+        _currentTenant.Change(Arg.Any<Guid?>()).Returns(Substitute.For<IDisposable>());
+        // NSubstitute records the ValueTask setup; the analyzer is worried about
+        // double-consumption which does not apply to mock configuration.
+#pragma warning disable CA2012
+        _serialPolicy
+            .EvaluateAsync(Arg.Any<string>(), Arg.Any<Guid?>(), Arg.Any<CancellationToken>())
+            .Returns(_ => ValueTask.FromResult(SerialPolicyDecision.Allow));
+#pragma warning restore CA2012
     }
 
     [Fact]
@@ -146,7 +159,7 @@ public sealed class FleetProvisioningServiceTests
 
     private FleetProvisioningService NewService() =>
         new(_deviceReader, _deviceWriter, _bindingReader, _bindingWriter, _guidGenerator,
-            _metrics, NullLogger<FleetProvisioningService>.Instance);
+            _currentTenant, _serialPolicy, _metrics, NullLogger<FleetProvisioningService>.Instance);
 
     private static Device NewDevice(string serial) =>
         Device.Create(
@@ -161,9 +174,9 @@ public sealed class FleetProvisioningServiceTests
             SerialNumber: "SN-001",
             TenantId: Tenant,
             ThingName: ThingName.From(Tenant, "SN-001").Value,
-            ThingArn: "arn:aws:iot:eu-west-1:123:thing/sample",
-            CertificateArn: "arn:aws:iot:eu-west-1:123:cert/abcdef",
-            CertificateSecretArn: "arn:aws:secretsmanager:eu-west-1:123:secret:device",
+            ThingArn: "arn:aws:iot:eu-west-1:123456789012:thing/sample",
+            CertificateArn: "arn:aws:iot:eu-west-1:123456789012:cert/" + new string('a', 64),
+            CertificateSecretArn: "arn:aws:secretsmanager:eu-west-1:123456789012:secret:device",
             Model: "Sensor-V1",
             FirmwareVersion: "1.0.0",
             Label: "Tilted",
