@@ -1,0 +1,18 @@
+{
+  "_comment": "Known-good AWS SNS test vector. The canonical string was built per AWS SNS signing spec (https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message.html) and signed with the RSA-2048 private key below using openssl dgst -sha256 -sign. SnsSignatureValidationTests loads this file, feeds the public key into the ISnsSigningCertificateCache mock (no network), and asserts that SnsPayloadSignatureValidator returns Valid.",
+  "envelope": {
+    "Type": "Notification",
+    "MessageId": "aws-test-vector-1",
+    "TopicArn": "arn:aws:sns:eu-west-1:000000000001:iot-telemetry",
+    "Message": "hello from AWS test vector",
+    "Timestamp": "2026-04-17T12:00:00.000Z",
+    "SignatureVersion": "1",
+    "SigningCertURL": "https://sns.eu-west-1.amazonaws.com/SimpleNotificationService-abc.pem",
+    "Signature": "U4WTJ3TUrAgM/fqxMX8nr4+s7FUhzwacBq5OpYWxseJvIRS7AQ/ZnvLOSo5P0DeDA5FTdEgJ608o1UxgRtH6OuWyqd/Sf8x6pncX/3klAG9fXD0wvzR5agBdXu02m7uU1ZVNyMUMOExPBQKC4kpy1TCw/6XTpEoiGsHn5521uxmW2HSq1qcnP12P8zB9QqHjWw9okc4Tw5zbQ2/YTjp0ZB2xmL8RABMYoRxRlxIGQzaTmGNy0jsvM/mNbsevPhsqK4bFminmHvXoMDv0wSbwQbFv4Z1jW7shuYp3cp2FEDqcaEyHvWmi51yxnosHWzqfzItxlE8vqd8tGywzdsPANA=="
+  },
+  "signingKeys": {
+    "_comment": "PEM-encoded PKCS#8 private key (RSA 2048) and SPKI public key used to produce the signature above. Embedded so the test suite is network-free and reproducible.",
+    "privateKeyPem": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDD6JgR6luWHAFI\nQzm4jBCiXowP6/4o5UqEgQHMC6uyk18Lq5sIHhQMdxyFSjPhsX8F9VNHRKCihVi7\nFb+xqgM/0iK9cQ/Qh60NQAUZlHtBgMAbd1Ff+0zk6kjGeYqrMM6/2Zlu/AElIw6w\n2R6LNykm45/X/8fua4s6HZHHPxSXyGgXj0mMU5bEYNc2/6qXhqNw9Ydb7BFbEyO9\nrUcBW4DRyrIcvKKVhHfN/pMERPXkRNWillJV0fZ8EQdnEanWaLP6JruPMLXUeD/w\nwrWvpendlViejaod7GBBI0T9FiFaVJtM8bcvTEeCysiYgiqsMVIlrSztDdACynd+\nDBh+KuIfAgMBAAECggEAOq8ganFw6OjPq4VTs4flbbXzr8tJ8ZcpuMJqNuSiFJaX\nqIfJo2dbKxa9COJe4zMHsVG5FgalNbnLCBOuPfqHCaWZOXU2Pwl9WZQ9UtnLCCaY\npUGbMyy0bngNv8Jluv0eWZLFpty/PRAg1PHc9+fYoGkcFxhsG+vEI277HZu0P/jF\njrlKMMmugkR/eExzZnkMak/7KqpvgQqutUr5FFxHhdTsTFXXA1x5OqsAulHkgWoY\n2lWnKPM2/foFO5R+LdCtl5hlL0ETCgBiMM0WpYNmCBN3kXFh8jfcYAM+PAMT7mY5\n5Cmvk7VSE+CrqGd4M1t4IlWC8s5eHvOqNvhmkBsLqQKBgQD+aZACWz5oFn10ent2\ngwR1MANaNy7Bh1dFYCB+rcrYeL1o6DwsKByJC6jaQ0xBhPgaLVTnuSHphqwDBe17\nfCaMCyDvxs9cTbXctaUCOP6t0TOMGRXXYDEjiK0AeJYC8xfg8z4AfItpZn+Ksp7Q\n5X2UaAvX7270qOGqZQ2XmYWTJwKBgQDFIZGLnO1rL87tzpWxwbXDTkZF9rgUmTaW\nWdMXPeTcMct9VjIwvNCbDu4rmGAmFf4W5bOhNCvtaWM6VQ58NkTm9P0dNEdRSLH3\nqMtH3EMuumKFUO+cz9IdeKDam5PhzIaDMrKTdv9pWhaoDSM7zIJj8QbJwXEtgC9z\nfwa2P1A0SQKBgDNpqcyQG+B1Cw1K40Bj4ba86TCGDlDVxPEkJ+zxuhhc7goRRHe3\n82xOiuTwzKxA7tJ7brkVVKEYshI6VG+r+y454YITLzx8B9B+dMYqNm1x5XTebOeF\nbOi9ahi6RbZ64cx324PFp3a5W/Tve+DDP8mJ7TrKDCYtKs2Admq4f6HpAoGALeRf\ntsnkt7Rcjx4t2UEIaJxbXcRPHHSCscPdkaaWFfD9t4MOkiwSwFZcegeyMouiKIB3\nLgswQsfrEtRkV+RmbAISvu7Bv5mV3NsN3//WIBXCA9lQvwfemX/QqrPXXJS5p+dw\njUYBtewEJEFSt4Qnws6EzwlaqMYTxeaHkHvy1wkCgYA2+fPF4GWfX8e/qOtNN7hF\nFGJNVZYYCo9OGADmPhyjOiFXYvG0RLxBiq1Or2bKHCocTLVHZ7mN79spE+VWNfd7\nGkEPP+9BUq7oiNo/hgpelzMDo9Hd2V4lKdqnihZY3hyf9tXmQq+K3tt1l0PzglNw\nFcCM/hhDBZeH/O9yTTW2NQ==\n-----END PRIVATE KEY-----",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw+iYEepblhwBSEM5uIwQ\nol6MD+v+KOVKhIEBzAurspNfC6ubCB4UDHcchUoz4bF/BfVTR0SgooVYuxW/saoD\nP9IivXEP0IetDUAFGZR7QYDAG3dRX/tM5OpIxnmKqzDOv9mZbvwBJSMOsNkeizcp\nJuOf1//H7muLOh2Rxz8Ul8hoF49JjFOWxGDXNv+ql4ajcPWHW+wRWxMjva1HAVuA\n0cqyHLyilYR3zf6TBET15ETVopZSVdH2fBEHZxGp1miz+ia7jzC11Hg/8MK1r6Xp\n3ZVYno2qHexgQSNE/RYhWlSbTPG3L0xHgsrImIIqrDFSJa0s7Q3QAsp3fgwYfiri\nHwIDAQAB\n-----END PUBLIC KEY-----"
+  }
+}
