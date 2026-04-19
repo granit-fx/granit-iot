@@ -78,7 +78,7 @@ public sealed class SnsSignatureValidationTests
         Dictionary<string, string> Envelope,
         AwsSnsTestVectorKeys SigningKeys);
 
-    private sealed record AwsSnsTestVectorKeys(string PrivateKeyPem, string PublicKeyPem);
+    private sealed record AwsSnsTestVectorKeys(string PublicKeyPem);
 
     private sealed class ValidatorHarness : IDisposable
     {
