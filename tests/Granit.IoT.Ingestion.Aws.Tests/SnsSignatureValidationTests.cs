@@ -82,6 +82,8 @@ public sealed class SnsSignatureValidationTests
 
     private sealed class ValidatorHarness : IDisposable
     {
+        private readonly HttpClient _httpClient;
+
         public ValidatorHarness(RSA publicKey)
         {
             ISnsSigningCertificateCache certCache = Substitute.For<ISnsSigningCertificateCache>();
@@ -108,8 +110,9 @@ public sealed class SnsSignatureValidationTests
                     Arg.Any<CancellationToken>())
                 .Returns(MaybeValue<byte>.None);
 
+            _httpClient = new HttpClient();
             IHttpClientFactory httpClientFactory = Substitute.For<IHttpClientFactory>();
-            httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient());
+            httpClientFactory.CreateClient(Arg.Any<string>()).Returns(_httpClient);
 
             Metrics = new IoTIngestionAwsMetrics(new TestMeterFactory());
             Validator = new SnsPayloadSignatureValidator(
@@ -125,6 +128,10 @@ public sealed class SnsSignatureValidationTests
 
         public IoTIngestionAwsMetrics Metrics { get; }
 
-        public void Dispose() => Metrics.Dispose();
+        public void Dispose()
+        {
+            _httpClient.Dispose();
+            Metrics.Dispose();
+        }
     }
 }

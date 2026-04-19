@@ -15,8 +15,15 @@ namespace Granit.IoT.Ingestion.Aws.Tests;
 /// will fetch and trust whatever PEM sits at that endpoint. Each vector below is
 /// a known attack shape; all must be rejected before any HTTP call is made.
 /// </summary>
-public sealed class SnsSigningCertUrlSecurityTests
+public sealed class SnsSigningCertUrlSecurityTests : IDisposable
 {
+    // Shared because DefaultSnsSigningCertificateCache only pulls the HttpClient
+    // after the URL passes the allow-list — every test here short-circuits before
+    // that, so the client is never actually used over the wire. Shared + disposed
+    // in one place avoids the CodeQL "created but not disposed" warning without
+    // cluttering each test with its own lifetime.
+    private static readonly HttpClient SharedHttpClient = new();
+
     /// <summary>
     /// Attack matrix covering every shape the regex must reject. Each vector
     /// ships with the threat it represents; when a vector is added, update the
@@ -68,11 +75,14 @@ public sealed class SnsSigningCertUrlSecurityTests
             "Valid CDN URL must pass the allow-list; failure should come from the HTTP layer.");
     }
 
+    /// <inheritdoc/>
+    public void Dispose() => SharedHttpClient.Dispose();
+
     private static DefaultSnsSigningCertificateCache BuildCache()
     {
         IFusionCache fusionCache = Substitute.For<IFusionCache>();
         IHttpClientFactory clientFactory = Substitute.For<IHttpClientFactory>();
-        clientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient());
+        clientFactory.CreateClient(Arg.Any<string>()).Returns(SharedHttpClient);
 
         IOptionsMonitor<AwsIoTIngestionOptions> optionsMonitor =
             Substitute.For<IOptionsMonitor<AwsIoTIngestionOptions>>();
