@@ -8,4 +8,16 @@ useDefault = true
   # signature validation tests are synthetic constants, not real credentials.
   paths = [
     '''tests/.*Tests.*\.cs$''',
+    '''tests/.*/Fixtures/.*\.json$''',
+  ]
+
+  # Historical commits on feature/audit-doc-naming + feature/43-sns-test-vectors
+  # that carried a one-off RSA-2048 private key in the AWS SNS test fixture.
+  # The key was generated specifically for the fixture via openssl, never
+  # deployed, and removed from the tree when gitleaks flagged it (the follow-up
+  # commit drops privateKeyPem from aws-sns-test-vector.json). Listed here so
+  # history scans stop alarming on a known-synthetic, test-only key.
+  commits = [
+    "d0a83680dbb5ddc122a4ab0eb6130466e8e32438",
+    "8b5e71c96fe75d0fdbfa25ae9ada65a4a12de2bc",
   ]

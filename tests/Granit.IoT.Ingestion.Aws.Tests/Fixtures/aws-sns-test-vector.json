@@ -1,0 +1,17 @@
+{
+  "_comment": "Known-good AWS SNS test vector. The canonical string was built per AWS SNS signing spec (https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message.html) and signed with a one-off RSA-2048 keypair whose PRIVATE KEY was discarded on purpose — only the public key + signature are committed here. This makes the fixture offline-reproducible while removing the private-key exfiltration risk. To regenerate: openssl genrsa / dgst -sha256 -sign, then drop privateKeyPem before committing. SnsSignatureValidationTests loads this file, feeds the public key into the ISnsSigningCertificateCache mock (no network), and asserts that SnsPayloadSignatureValidator returns Valid.",
+  "envelope": {
+    "Type": "Notification",
+    "MessageId": "aws-test-vector-1",
+    "TopicArn": "arn:aws:sns:eu-west-1:000000000001:iot-telemetry",
+    "Message": "hello from AWS test vector",
+    "Timestamp": "2026-04-17T12:00:00.000Z",
+    "SignatureVersion": "1",
+    "SigningCertURL": "https://sns.eu-west-1.amazonaws.com/SimpleNotificationService-abc.pem",
+    "Signature": "U4WTJ3TUrAgM/fqxMX8nr4+s7FUhzwacBq5OpYWxseJvIRS7AQ/ZnvLOSo5P0DeDA5FTdEgJ608o1UxgRtH6OuWyqd/Sf8x6pncX/3klAG9fXD0wvzR5agBdXu02m7uU1ZVNyMUMOExPBQKC4kpy1TCw/6XTpEoiGsHn5521uxmW2HSq1qcnP12P8zB9QqHjWw9okc4Tw5zbQ2/YTjp0ZB2xmL8RABMYoRxRlxIGQzaTmGNy0jsvM/mNbsevPhsqK4bFminmHvXoMDv0wSbwQbFv4Z1jW7shuYp3cp2FEDqcaEyHvWmi51yxnosHWzqfzItxlE8vqd8tGywzdsPANA=="
+  },
+  "signingKeys": {
+    "_comment": "SPKI public key used to verify the signature above. The matching private key was destroyed on fixture creation and cannot be recovered — rotating the fixture requires a fresh keypair.",
+    "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw+iYEepblhwBSEM5uIwQ\nol6MD+v+KOVKhIEBzAurspNfC6ubCB4UDHcchUoz4bF/BfVTR0SgooVYuxW/saoD\nP9IivXEP0IetDUAFGZR7QYDAG3dRX/tM5OpIxnmKqzDOv9mZbvwBJSMOsNkeizcp\nJuOf1//H7muLOh2Rxz8Ul8hoF49JjFOWxGDXNv+ql4ajcPWHW+wRWxMjva1HAVuA\n0cqyHLyilYR3zf6TBET15ETVopZSVdH2fBEHZxGp1miz+ia7jzC11Hg/8MK1r6Xp\n3ZVYno2qHexgQSNE/RYhWlSbTPG3L0xHgsrImIIqrDFSJa0s7Q3QAsp3fgwYfiri\nHwIDAQAB\n-----END PUBLIC KEY-----"
+  }
+}
