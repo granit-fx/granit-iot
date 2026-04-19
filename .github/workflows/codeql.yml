@@ -1,0 +1,75 @@
+# CodeQL — static analysis (SAST) for C#.
+# Populates the GitHub Security tab with findings and contributes to the
+# OpenSSF Scorecard SAST check.
+
+name: CodeQL
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: "15 3 * * 2" # Weekly Tuesday 03:15 UTC
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: read-all
+
+jobs:
+  analyze:
+    name: Analyze (csharp)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      security-events: write # upload SARIF to Security tab
+      contents: read
+      packages: read
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: NuGet cache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Packages.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Authenticate GitHub Packages
+        env:
+          GRANIT_PACKAGES_TOKEN: ${{ secrets.GRANIT_PACKAGES_TOKEN }}
+        run: >
+          dotnet nuget update source granit-registry
+          --username granit-fx
+          --password "$GRANIT_PACKAGES_TOKEN"
+          --store-password-in-clear-text
+          --configfile nuget.config
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@c10b8064de6f491fea524254123dbe5e09572f13 # v4
+        with:
+          languages: csharp
+          queries: security-extended,security-and-quality
+
+      - name: Build
+        env:
+          DOTNET_NOLOGO: true
+          DOTNET_CLI_TELEMETRY_OPTOUT: true
+        run: >
+          dotnet build Granit.IoT.slnx
+          -c Release
+          -p:RunAnalyzers=false
+          -p:EnforceCodeStyleInBuild=false
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@c10b8064de6f491fea524254123dbe5e09572f13 # v4
+        with:
+          category: "/language:csharp"
