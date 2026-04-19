@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_comment": "Test sharding config for CI parallelisation. A CI matrix reads this file and runs each shard in a separate job — splitting slow Testcontainers-backed shards from fast unit shards, and isolating the 'security' shard so a regression there blocks the merge gate even when other shards are skipped.",
+  "shards": {
+    "unit": {
+      "description": "Fast unit tests that need no container / no network. Runs on every push.",
+      "projects": [
+        "tests/Granit.IoT.Tests",
+        "tests/Granit.IoT.Endpoints.Tests",
+        "tests/Granit.IoT.Ingestion.Tests",
+        "tests/Granit.IoT.Ingestion.Scaleway.Tests",
+        "tests/Granit.IoT.Mqtt.Tests",
+        "tests/Granit.IoT.Mqtt.Mqttnet.Tests",
+        "tests/Granit.IoT.Wolverine.Tests",
+        "tests/Granit.IoT.Notifications.Tests",
+        "tests/Granit.IoT.Timeline.Tests",
+        "tests/Granit.IoT.Mcp.Tests",
+        "tests/Granit.IoT.BackgroundJobs.Tests",
+        "tests/Granit.IoT.Aws.Tests",
+        "tests/Granit.IoT.Aws.Shadow.Tests",
+        "tests/Granit.IoT.Aws.Jobs.Tests"
+      ]
+    },
+    "architecture": {
+      "description": "ArchUnit rules enforcing ring discipline, naming, DDD, module anatomy. Must pass before merge.",
+      "projects": [
+        "tests/Granit.IoT.ArchitectureTests"
+      ]
+    },
+    "security": {
+      "description": "Story #43 — signature-validation red-team tests and AWS-published test vectors. Failure here means a crypto regression or a bypass of the SigningCertURL / SigV4 allow-lists. Blocks the merge gate.",
+      "projects": [
+        "tests/Granit.IoT.Ingestion.Aws.Tests",
+        "tests/Granit.IoT.Aws.Provisioning.Tests",
+        "tests/Granit.IoT.Aws.FleetProvisioning.Tests"
+      ]
+    },
+    "persistence": {
+      "description": "EF Core tests that spin up Postgres / TimescaleDB via Testcontainers. Slower; runs on PR + nightly.",
+      "projects": [
+        "tests/Granit.IoT.EntityFrameworkCore.Tests",
+        "tests/Granit.IoT.EntityFrameworkCore.Postgres.Tests",
+        "tests/Granit.IoT.EntityFrameworkCore.Timescale.Tests",
+        "tests/Granit.IoT.Aws.EntityFrameworkCore.Tests"
+      ]
+    }
+  }
+}
