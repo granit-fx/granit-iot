@@ -11,6 +11,33 @@
     <NoWarn>CA1848;CA1707;CA1305;CA1861;NU1608;GRMOD001</NoWarn>
   </PropertyGroup>
 
+  <!-- Default version (overridden in CI by -p:PackageVersion=0.1.0-dev.{run_number}) -->
+  <PropertyGroup>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix>dev</VersionSuffix>
+  </PropertyGroup>
+
+  <!-- NuGet package metadata (applied to every packable project) -->
+  <PropertyGroup>
+    <Authors>Jean-François Meyers</Authors>
+    <Company>Granit</Company>
+    <Copyright>Copyright 2026 Jean-Francois Meyers</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>granit;iot;telemetry;mqtt;aws-iot;scaleway-iot</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/granit-fx/granit-iot</RepositoryUrl>
+    <PackageProjectUrl>https://granit-fx.dev/</PackageProjectUrl>
+    <PackageIcon>granit-icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <!-- Pack the shared icon and the per-project README into every package -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)assets/granit-icon-64.png" Pack="true" PackagePath="granit-icon.png" Visible="false" />
+    <None Include="$(MSBuildProjectDirectory)/README.md" Pack="true" PackagePath="" Visible="false" Condition="Exists('$(MSBuildProjectDirectory)/README.md')" />
+  </ItemGroup>
+
   <!-- ASP.NET Core framework reference for module projects (endpoints need MVC attributes) -->
   <ItemGroup Condition="'$(IsAspireSharedProject)' != 'true' and '$(IsAspireHost)' != 'true' and '$(UsingMicrosoftNETSdkWeb)' != 'true'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
