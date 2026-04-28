@@ -1,0 +1,16 @@
+# Gitleaks fingerprints to ignore.
+# Format: <commit>:<path>:<rule>:<line>
+#
+# Each entry below is a documented false positive — synthetic test material,
+# not a real credential. Add new entries with a one-line rationale.
+
+# RSA test keypair embedded in the SNS verifier test vector. Already removed
+# from the working tree in e3e77b7 ("fix(security): drop RSA private key from
+# SNS test fixture"); these fingerprints silence the historical traces that
+# `gitleaks --log-opts=--all` keeps reporting.
+d0a83680dbb5ddc122a4ab0eb6130466e8e32438:tests/Granit.IoT.Ingestion.Aws.Tests/Fixtures/aws-sns-test-vector.json:private-key:15
+8b5e71c96fe75d0fdbfa25ae9ada65a4a12de2bc:tests/Granit.IoT.Ingestion.Aws.Tests/Fixtures/aws-sns-test-vector.json:private-key:15
+
+# Synthetic 16-byte HMAC secret used only to compute fixture signatures in
+# ScalewaySignatureValidatorTests. Not a real Scaleway credential.
+92a0f58cf74390edc83b91bbe641116480dc40e8:tests/Granit.IoT.Ingestion.Tests/Scaleway/ScalewaySignatureValidatorTests.cs:generic-api-key:16

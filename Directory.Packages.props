@@ -104,23 +104,23 @@
 
   <!-- Security patches: transitive dependency version overrides -->
   <ItemGroup Label="Security overrides">
-    <PackageVersion Include="MimeKit" Version="4.15.1" />
+    <PackageVersion Include="MimeKit" Version="4.16.0" />
     <PackageVersion Include="Scriban" Version="7.1.0" />
   </ItemGroup>
 
   <ItemGroup Label="Wolverine (CQRS / Messaging)">
-    <PackageVersion Include="WolverineFx" Version="5.31.*" />
-    <PackageVersion Include="WolverineFx.Http" Version="5.31.*" />
-    <PackageVersion Include="WolverineFx.EntityFrameworkCore" Version="5.31.*" />
-    <PackageVersion Include="WolverineFx.FluentValidation" Version="5.31.*" />
-    <PackageVersion Include="WolverineFx.Http.FluentValidation" Version="5.31.*" />
-    <PackageVersion Include="WolverineFx.Postgresql" Version="5.31.*" />
+    <PackageVersion Include="WolverineFx" Version="5.33.*" />
+    <PackageVersion Include="WolverineFx.Http" Version="5.33.*" />
+    <PackageVersion Include="WolverineFx.EntityFrameworkCore" Version="5.33.*" />
+    <PackageVersion Include="WolverineFx.FluentValidation" Version="5.33.*" />
+    <PackageVersion Include="WolverineFx.Http.FluentValidation" Version="5.33.*" />
+    <PackageVersion Include="WolverineFx.Postgresql" Version="5.33.*" />
   </ItemGroup>
 
   <ItemGroup Label="ASP.NET Core">
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.*" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.*" />
-    <PackageVersion Include="Asp.Versioning.Http" Version="10.0.0-preview.*" />
+    <PackageVersion Include="Asp.Versioning.Http" Version="10.*" />
   </ItemGroup>
 
   <ItemGroup Label="Entity Framework Core">
